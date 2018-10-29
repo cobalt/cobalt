@@ -1,7 +1,7 @@
-package org.hexworks.cobalt.datatypes.property
+package org.hexworks.cobalt.databinding.property
 
-import org.hexworks.cobalt.datatypes.value.ObservableValue
-import org.hexworks.cobalt.datatypes.value.WritableValue
+import org.hexworks.cobalt.databinding.value.ObservableValue
+import org.hexworks.cobalt.databinding.value.WritableValue
 
 interface Property<T> : WritableValue<T> {
 

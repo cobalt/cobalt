@@ -1,6 +1,6 @@
-package org.hexworks.cobalt.datatypes.binding
+package org.hexworks.cobalt.databinding.binding
 
-import org.hexworks.cobalt.datatypes.value.ObservableValue
+import org.hexworks.cobalt.databinding.value.ObservableValue
 
 /**
  * A [Binding] calculates a value that depends on one or more sources. The

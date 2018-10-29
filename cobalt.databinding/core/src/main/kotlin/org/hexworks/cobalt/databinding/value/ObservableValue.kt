@@ -1,6 +1,6 @@
-package org.hexworks.cobalt.datatypes.value
+package org.hexworks.cobalt.databinding.value
 
-import org.hexworks.cobalt.datatypes.event.ChangeListener
+import org.hexworks.cobalt.databinding.event.ChangeListener
 import org.hexworks.cobalt.events.Subscription
 
 /**
@@ -8,9 +8,9 @@ import org.hexworks.cobalt.events.Subscription
  * observe the value for changes.
  */
 // TODO: do we need observable?
-interface ObservableValue<T> {
+interface ObservableValue<out T> {
 
     val value: T
 
-    fun onChange(listener: ChangeListener<in T>): Subscription
+    fun onChange(listener: ChangeListener<T>): Subscription
 }

@@ -1,8 +1,8 @@
-package org.hexworks.cobalt.datatypes.expression
+package org.hexworks.cobalt.databinding.expression
 
-import org.hexworks.cobalt.datatypes.binding.Binding
-import org.hexworks.cobalt.datatypes.binding.BooleanBinding
-import org.hexworks.cobalt.datatypes.value.ObservableValue
+import org.hexworks.cobalt.databinding.binding.Binding
+import org.hexworks.cobalt.databinding.binding.BooleanBinding
+import org.hexworks.cobalt.databinding.value.ObservableValue
 
 abstract class StringExpression : ObservableValue<String> {
 

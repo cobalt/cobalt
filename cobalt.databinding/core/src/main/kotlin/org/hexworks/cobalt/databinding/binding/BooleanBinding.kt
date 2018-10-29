@@ -1,7 +1,7 @@
-package org.hexworks.cobalt.datatypes.binding
+package org.hexworks.cobalt.databinding.binding
 
-import org.hexworks.cobalt.datatypes.event.ChangeListener
-import org.hexworks.cobalt.datatypes.expression.BooleanExpression
+import org.hexworks.cobalt.databinding.event.ChangeListener
+import org.hexworks.cobalt.databinding.expression.BooleanExpression
 import org.hexworks.cobalt.events.Subscription
 
 abstract class BooleanBinding : BooleanExpression(), Binding<Boolean> {

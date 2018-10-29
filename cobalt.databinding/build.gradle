@@ -27,6 +27,7 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 api group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: coroutines_version
                 api project(":cobalt.datatypes")
+                api project(":cobalt.events")
             }
         }
         commonTest {
@@ -44,6 +45,7 @@ kotlin {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
                 api project(":cobalt.datatypes")
+                api project(":cobalt.events")
             }
         }
 
