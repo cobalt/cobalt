@@ -1,0 +1,9 @@
+package org.hexworks.cobalt.events
+
+/**
+ * Used to scope [Event]s. Each [EventScope] has a separate
+ * namespace from other [EventScope]s and [Event]s sent with different
+ * scopes are are completely isolated from each other.
+ * Tip: use `object`s to implement [EventScope] for ease of use.
+ */
+interface EventScope
