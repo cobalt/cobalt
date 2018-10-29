@@ -1,6 +1,6 @@
-package org.hexworks.cobalt.databinding.value
+package org.hexworks.cobalt.databinding.api.value
 
-import org.hexworks.cobalt.databinding.event.ChangeListener
+import org.hexworks.cobalt.databinding.api.event.ChangeListener
 import org.hexworks.cobalt.events.Subscription
 
 /**

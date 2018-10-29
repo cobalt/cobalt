@@ -7,11 +7,11 @@ import org.hexworks.cobalt.events.impl.ApplicationScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Suppress("FunctionName")
+@Suppress("TestFunctionName")
 class EventBusTest {
 
     @Test
-    fun `When subscribed to an event and the proper event is broadcasted then the subscriber should be notified`() {
+    fun When_subscribed_to_an_event_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
 
         var notified = false
         EventBus.subscribe<TestEvent> {
@@ -24,7 +24,7 @@ class EventBusTest {
     }
 
     @Test
-    fun `When subscribed to an event and scope and the proper event is broadcasted then the subscriber should be notified`() {
+    fun When_subscribed_to_an_event_and_scope_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
 
         var notified = false
         EventBus.subscribe<TestEvent>(TestScope) {
@@ -37,7 +37,7 @@ class EventBusTest {
     }
 
     @Test
-    fun `When subscribed to an event and scope and the proper event is broadcasted but with wrong scope then the subscriber should not be notified`() {
+    fun When_subscribed_to_an_event_and_scope_and_the_proper_event_is_broadcasted_but_with_wrong_scope_then_the_subscriber_should_not_be_notified() {
 
         var notified = false
         EventBus.subscribe<TestEvent> {
@@ -50,7 +50,7 @@ class EventBusTest {
     }
 
     @Test
-    fun `When subscribed to an event with a prototype and the proper event is broadcasted then the subscriber should be notified`() {
+    fun When_subscribed_to_an_event_with_a_prototype_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
 
         var notified = false
         EventBus.subscribe<TestEventPrototype>(TestScope, TestEventPrototype) {
@@ -63,7 +63,7 @@ class EventBusTest {
     }
 
     @Test
-    fun `When subscribed to an event with a key and the proper event is broadcasted then the subscriber should be notified`() {
+    fun When_subscribed_to_an_event_with_a_key_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
 
         var notified = false
         EventBus.subscribe<TestEventPrototype>(key = TestEventPrototype.key) {
@@ -77,23 +77,14 @@ class EventBusTest {
 
 
     @Test
-    fun `When unsubscribed from event, subscriber should not be present in EventBus`() {
-
-        EventBus.subscribe<TestEvent> {  }.cancel()
-
-        assertEquals(listOf(), EventBus.subscribers, "Subscribers should be empty.")
-
-    }
-
-    @Test
-    fun `When EventBus has multiple subscribers for the same event, all should be notified when that event is fired`() {
+    fun When_EventBus_has_multiple_subscribers_for_the_same_event_all_should_be_notified_when_that_event_is_fired() {
 
         var notifications = 0
 
-        EventBus.subscribe<TestEvent>{
+        EventBus.subscribe<TestEvent> {
             notifications++
         }
-        EventBus.subscribe<TestEvent>{
+        EventBus.subscribe<TestEvent> {
             notifications++
         }
 
@@ -103,14 +94,14 @@ class EventBusTest {
     }
 
     @Test
-    fun `When EventBus has multiple subscribers for the same event but different scopes, only one should be notified when that event is fired`() {
+    fun When_EventBus_has_multiple_subscribers_for_the_same_event_but_different_scopes_only_one_should_be_notified_when_that_event_is_fired() {
 
         val notifications = mutableListOf<EventScope>()
 
-        EventBus.subscribe<TestEvent>(TestScope){
+        EventBus.subscribe<TestEvent>(TestScope) {
             notifications.add(TestScope)
         }
-        EventBus.subscribe<TestEvent>(ApplicationScope){
+        EventBus.subscribe<TestEvent>(ApplicationScope) {
             notifications.add(ApplicationScope)
         }
 
@@ -119,7 +110,14 @@ class EventBusTest {
         assertEquals(mutableListOf<EventScope>(TestScope), notifications, "Only the subscriber with TestScope should have been notified.")
     }
 
+    @Test
+    fun When_unsubscribed_from_event_subscriber_should_not_be_present_in_EventBus() {
 
+        EventBus.subscribe<TestEvent> { }.cancel()
+
+        assertEquals(listOf(), EventBus.subscribers, "Subscribers should be empty.")
+
+    }
 
     object TestEvent : Event
 

@@ -1,4 +1,4 @@
-package org.hexworks.cobalt.databinding.event
+package org.hexworks.cobalt.databinding.api.event
 
 interface ChangeListener<in T> {
 

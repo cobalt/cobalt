@@ -1,8 +1,8 @@
-package org.hexworks.cobalt.databinding.expression
+package org.hexworks.cobalt.databinding.api.expression
 
-import org.hexworks.cobalt.databinding.binding.BooleanBinding
-import org.hexworks.cobalt.databinding.binding.StringBinding
-import org.hexworks.cobalt.databinding.value.ObservableValue
+import org.hexworks.cobalt.databinding.api.binding.BooleanBinding
+import org.hexworks.cobalt.databinding.api.binding.StringBinding
+import org.hexworks.cobalt.databinding.api.value.ObservableValue
 
 
 /**

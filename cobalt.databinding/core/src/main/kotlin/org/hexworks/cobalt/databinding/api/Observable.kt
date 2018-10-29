@@ -1,6 +1,6 @@
-package org.hexworks.cobalt.databinding
+package org.hexworks.cobalt.databinding.api
 
-import org.hexworks.cobalt.databinding.event.InvalidationListener
+import org.hexworks.cobalt.databinding.api.event.InvalidationListener
 
 /**
  * An [Observable] is an entity that wraps content and allows to

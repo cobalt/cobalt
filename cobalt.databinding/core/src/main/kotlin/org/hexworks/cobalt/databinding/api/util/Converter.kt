@@ -1,4 +1,4 @@
-package org.hexworks.cobalt.databinding.util
+package org.hexworks.cobalt.databinding.api.util
 
 interface Converter<S, T> {
 

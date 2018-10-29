@@ -1,14 +1,17 @@
 package org.hexworks.cobalt.datatypes.factory
 
 import org.hexworks.cobalt.datatypes.Identifier
+import org.hexworks.cobalt.datatypes.impl.DefaultIdentifier
+import java.util.*
 
 actual object IdentifierFactory {
+
     actual fun randomIdentifier(): Identifier {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return DefaultIdentifier()
     }
 
     actual fun fromString(str: String): Identifier {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return DefaultIdentifier(UUID.fromString(str))
     }
 
 }

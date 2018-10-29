@@ -1,9 +1,9 @@
-package org.hexworks.cobalt.databinding.property
+package org.hexworks.cobalt.databinding.api.property
 
-import org.hexworks.cobalt.databinding.value.ObservableValue
-import org.hexworks.cobalt.databinding.value.WritableValue
+import org.hexworks.cobalt.databinding.api.value.ObservableValue
+import org.hexworks.cobalt.databinding.api.value.WritableValue
 
-interface Property<T> : WritableValue<T> {
+interface Property<T : Any> : WritableValue<T> {
 
     /**
      * Can be used to check, if a [Property] is bound.
