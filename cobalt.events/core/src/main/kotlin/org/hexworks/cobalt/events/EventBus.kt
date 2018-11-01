@@ -1,5 +1,3 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package org.hexworks.cobalt.events
 
 import org.hexworks.cobalt.events.impl.ApplicationScope
@@ -8,7 +6,7 @@ import org.hexworks.cobalt.events.impl.ApplicationScope
  * An [EventBus] can be used to `broadcast` [Event]s to subscribers of that
  * [Event].
  */
-object EventBus {
+class EventBus {
 
     val subscribers: List<Pair<EventScope, String>>
         get() = subscriptions.keys.toList()
@@ -24,17 +22,6 @@ object EventBus {
                 "Event class doesn't have a name: ${T::class}")
         return subscribe(eventScope = eventScope,
                 key = key,
-                callback = callback)
-    }
-
-    /**
-     * Subscribes the callee to [Event]s which have an [Event.key] equal to `key`.
-     */
-    fun <T : Event> subscribe(eventScope: EventScope = ApplicationScope,
-                              eventPrototype: Event,
-                              callback: (T) -> Unit): Subscription {
-        return subscribe(eventScope = eventScope,
-                key = eventPrototype.key,
                 callback = callback)
     }
 
@@ -58,6 +45,7 @@ object EventBus {
     /**
      * Broadcasts [Event] to all listeners of this [Event]'s [Event.key].
      */
+    @Suppress("UNCHECKED_CAST")
     fun broadcast(event: Event,
                   eventScope: EventScope = ApplicationScope) {
         subscriptions[eventScope to event.key]?.let { subscribers ->
@@ -71,7 +59,7 @@ object EventBus {
         }
     }
 
-    private class EventBusSubscription<in T : Event>(
+    private inner class EventBusSubscription<in T : Event>(
             val eventScope: EventScope,
             val key: String,
             val callback: (T) -> Unit) : Subscription {

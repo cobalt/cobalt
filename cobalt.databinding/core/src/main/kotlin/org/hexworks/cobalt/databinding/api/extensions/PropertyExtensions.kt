@@ -1,8 +1,9 @@
 package org.hexworks.cobalt.databinding.api.extensions
 
 import org.hexworks.cobalt.databinding.api.binding.Binding
-import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.databinding.api.converter.BiConverter
+import org.hexworks.cobalt.databinding.api.converter.Converter
+import org.hexworks.cobalt.databinding.api.property.Property
 
 inline fun <S : Any, T : Any> Property<S>.bindBidirectional(
         other: Property<T>,
@@ -15,6 +16,16 @@ inline fun <S : Any, T : Any> Property<S>.bindBidirectional(
 
         override fun convertTargetToSource(target: T): S {
             return targetConverter(target)
+        }
+    })
+}
+
+inline fun <S : Any, T : Any> Property<S>.bind(
+        other: Property<T>,
+        crossinline converter: (T) -> S) {
+    this.bind(other, object : Converter<T, S> {
+        override fun convert(source: T): S {
+            return converter(source)
         }
     })
 }

@@ -1,5 +1,5 @@
 package org.hexworks.cobalt.databinding.api.collections
 
-import org.hexworks.cobalt.databinding.api.Observable
+import org.hexworks.cobalt.databinding.api.value.ObservableValue
 
-interface ObservableList<E> : List<E>, Observable
+interface ObservableList<E> : List<E>, ObservableValue<List<E>>
