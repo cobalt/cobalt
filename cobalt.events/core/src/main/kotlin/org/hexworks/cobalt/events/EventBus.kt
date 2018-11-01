@@ -65,8 +65,7 @@ object EventBus {
                 try {
                     (subscription.callback as (Event) -> Unit).invoke(event)
                 } catch (e: Exception) {
-                    // TODO: make more robust
-                    println("Fail: ${e.message}")
+                    subscription.cancel(CancelledByException(e))
                 }
             }
         }
@@ -77,7 +76,12 @@ object EventBus {
             val key: String,
             val callback: (T) -> Unit) : Subscription {
 
-        override fun cancel() {
+        override var cancelState: CancelState = NotCancelled
+            private set
+
+
+        override fun cancel(cancelState: CancelState) {
+            this.cancelState = cancelState
             subscriptions.remove(eventScope to key)
         }
     }
