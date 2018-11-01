@@ -1,6 +1,7 @@
 package org.hexworks.cobalt.databinding.internal.property
 
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
+import org.hexworks.cobalt.databinding.api.extensions.bind
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.datatypes.Maybe
 import kotlin.test.*
@@ -156,12 +157,39 @@ class DefaultPropertyTest {
         assertEquals(expected = QUX, actual = otherProperty.value)
     }
 
+    @Test
+    fun When_bound_with_converter_target_value_should_be_updated() {
+        val otherProperty = DefaultProperty(1)
 
+        target.bind(otherProperty) {
+            otherProperty.value.toString()
+        }
+
+        assertEquals(expected = ONE, actual = target.value,
+                message = "Target value should have been updated.")
+    }
+
+    @Test
+    fun When_bound_with_converter_and_other_changes_target_should_be_updated() {
+        val otherProperty = DefaultProperty(1)
+
+        target.bind(otherProperty) {
+            otherProperty.value.toString()
+        }
+
+        otherProperty.value = 2
+
+        assertEquals(expected = TWO, actual = target.value,
+                message = "Target value should have been updated.")
+    }
 
 
     companion object {
         const val XUL = "XUL"
         const val QUX = "QUX"
         const val BAZ = "BAZ"
+
+        const val ONE = "1"
+        const val TWO = "2"
     }
 }

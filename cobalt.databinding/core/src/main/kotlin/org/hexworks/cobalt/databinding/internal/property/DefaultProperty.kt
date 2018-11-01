@@ -1,5 +1,6 @@
 package org.hexworks.cobalt.databinding.internal.property
 
+import org.hexworks.cobalt.databinding.api.Cobalt
 import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.converter.BiConverter
 import org.hexworks.cobalt.databinding.api.converter.Converter
@@ -38,7 +39,7 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
         }
 
     override fun onChange(listener: ChangeListener<T>): Subscription {
-        return EventBus.subscribe<ChangeEvent<T>>(scope) {
+        return Cobalt.eventbus.subscribe<ChangeEvent<T>>(scope) {
             listener.changed(it)
         }
     }
@@ -98,7 +99,7 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
         if (currentValue != value) {
             val oldValue = currentValue
             currentValue = value
-            EventBus.broadcast(
+            Cobalt.eventbus.broadcast(
                     event = ChangeEvent(this, oldValue, currentValue),
                     eventScope = scope)
         }
