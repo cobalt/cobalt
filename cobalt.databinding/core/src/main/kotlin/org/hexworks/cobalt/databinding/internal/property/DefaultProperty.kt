@@ -1,14 +1,17 @@
 package org.hexworks.cobalt.databinding.internal.property
 
 import org.hexworks.cobalt.databinding.api.binding.Binding
+import org.hexworks.cobalt.databinding.api.converter.BiConverter
+import org.hexworks.cobalt.databinding.api.converter.Converter
+import org.hexworks.cobalt.databinding.api.converter.IdentityConverter
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
 import org.hexworks.cobalt.databinding.api.event.ChangeListener
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
-import org.hexworks.cobalt.databinding.api.util.Converter
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.databinding.internal.binding.BidirectionalBinding
+import org.hexworks.cobalt.databinding.internal.binding.BidirectionalConverterBinding
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.fold
 import org.hexworks.cobalt.datatypes.extensions.map
@@ -16,11 +19,14 @@ import org.hexworks.cobalt.datatypes.factory.IdentifierFactory
 import org.hexworks.cobalt.events.EventBus
 import org.hexworks.cobalt.events.Subscription
 
+@Suppress("UNCHECKED_CAST")
 class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
+
     private val scope = ChangeEventScope(IdentifierFactory.randomIdentifier())
+    private val identityConverter = IdentityConverter<T>()
 
     private var currentValue = initialValue
-    private var observable = Maybe.empty<Pair<ObservableValue<T>, Subscription>>()
+    private var bindingSubscription = Maybe.empty<Subscription>()
 
     override var value: T
         get() = currentValue
@@ -37,25 +43,28 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
         }
     }
 
-    override fun isBound() = observable.isPresent
+    override fun isBound() = bindingSubscription.isPresent
 
     override fun bind(observable: ObservableValue<T>) {
-        this.observable.fold(whenEmpty = {
+        bind(observable, identityConverter)
+    }
+
+    override fun <U : Any> bind(observable: ObservableValue<U>, converter: Converter<U, T>) {
+        this.bindingSubscription.fold(whenEmpty = {
             if (observable !== this) {
-                doBind(observable)
+                doBind(observable, converter)
             }
         }, whenPresent = { oldValue ->
             if (oldValue !== observable) {
-                doBind(observable)
+                doBind(observable, converter)
             }
         })
     }
 
     override fun unbind() {
-        observable.map { (oldObservable, subscription) ->
-            currentValue = oldObservable.value
+        bindingSubscription.map { subscription ->
             subscription.cancel()
-            observable = Maybe.empty()
+            bindingSubscription = Maybe.empty()
         }
     }
 
@@ -68,16 +77,21 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
         return BidirectionalBinding(this, other)
     }
 
-    fun <U : Any> bindBidirectional(other: Property<U>, converter: Converter<T, U>) {
-        TODO()
+    override fun <U : Any> bindBidirectional(other: Property<U>, converter: BiConverter<T, U>): Binding<T> {
+        require(this !== other) {
+            "Can't bind a property to itself."
+        }
+        // TODO: transaction
+        this.value = converter.convertTargetToSource(other.value)
+        return BidirectionalConverterBinding(this, other, converter)
     }
 
-    private fun doBind(observable: ObservableValue<T>) {
+    private fun <U : Any> doBind(observable: ObservableValue<U>, converter: Converter<U, T>) {
         val subscription = observable.onChange { changeEvent ->
-            updateCurrentValue(changeEvent.newValue)
+            updateCurrentValue(converter.convert(changeEvent.newValue))
         }
-        updateCurrentValue(observable.value)
-        this.observable = Maybe.of(observable to subscription)
+        updateCurrentValue(converter.convert(observable.value))
+        this.bindingSubscription = Maybe.of(subscription)
     }
 
     private fun updateCurrentValue(value: T) {
@@ -90,3 +104,5 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
         }
     }
 }
+
+
