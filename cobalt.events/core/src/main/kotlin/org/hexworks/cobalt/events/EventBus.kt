@@ -59,6 +59,21 @@ class EventBus {
         }
     }
 
+    /**
+     * Cancels all [Subscription]s for a given [EventScope].
+     */
+    fun cancelScope(scope: EventScope) {
+        subscriptions.filterKeys { it.first == scope }
+                .flatMap { it.value }
+                .forEach {
+                    try {
+                        it.cancel()
+                    } catch (e: Exception) {
+                        println("Cancelling subscription failed: ${e.message}.")
+                    }
+                }
+    }
+
     private inner class EventBusSubscription<in T : Event>(
             val eventScope: EventScope,
             val key: String,
