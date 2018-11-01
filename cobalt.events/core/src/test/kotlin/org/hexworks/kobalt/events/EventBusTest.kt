@@ -1,13 +1,15 @@
 package org.hexworks.kobalt.events
 
+import org.hexworks.cobalt.events.CancelledByException
 import org.hexworks.cobalt.events.Event
 import org.hexworks.cobalt.events.EventBus
 import org.hexworks.cobalt.events.EventScope
 import org.hexworks.cobalt.events.impl.ApplicationScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-@Suppress("TestFunctionName")
+@Suppress("TestFunctionName", "FunctionName")
 class EventBusTest {
 
     @Test
@@ -117,6 +119,22 @@ class EventBusTest {
 
         assertEquals(listOf(), EventBus.subscribers, "Subscribers should be empty.")
 
+    }
+
+    @Test
+    fun When_invoking_callback_causes_exception_subscriber_should_be_cancelled_with_exception() {
+        val exception = IllegalArgumentException()
+
+        val subscription = EventBus.subscribe<TestEvent> {
+            throw exception
+        }
+
+        val expectedState = CancelledByException(exception)
+
+        EventBus.broadcast(TestEvent)
+
+        assertEquals(expected = expectedState, actual = subscription.cancelState,
+                message = "Subscriber should have been cancelled with exception")
     }
 
     object TestEvent : Event

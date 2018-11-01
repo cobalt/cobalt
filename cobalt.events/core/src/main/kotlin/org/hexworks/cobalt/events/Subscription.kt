@@ -5,9 +5,14 @@ package org.hexworks.cobalt.events
  */
 interface Subscription {
 
+    val cancelled: Boolean
+        get() = cancelState.cancelled
+
+    val cancelState: CancelState
+
     /**
      * Cancels the [Subscription] to the event.
      */
-    fun cancel()
+    fun cancel(cancelState: CancelState = CancelledByHand)
 
 }
