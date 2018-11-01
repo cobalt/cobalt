@@ -8,7 +8,7 @@ import org.hexworks.cobalt.events.Subscription
  * observe the value for changes.
  */
 // TODO: do we need observable?
-interface ObservableValue<out T> {
+interface ObservableValue<out T: Any> {
 
     val value: T
 

@@ -7,17 +7,8 @@ import org.hexworks.cobalt.databinding.api.value.ObservableValue
  * sources are usually called the dependency of a binding. A binding observes
  * its dependencies for changes and updates its value automatically.
  */
-interface Binding<T> : ObservableValue<T> {
-
-    // TODO: do we need these?
-//    fun isValid(): Boolean
-
-//    fun getDependencies(): ObservableList<*>
-
-//    fun invalidate()
+interface Binding<out T: Any> : ObservableValue<T> {
 
     fun dispose()
-
-    fun computeValue(): T
 
 }
