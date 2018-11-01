@@ -1,8 +1,7 @@
-package org.hexworks.cobalt.databinding.internal
+package org.hexworks.cobalt.databinding.internal.property
 
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.extensions.onChange
-import org.hexworks.cobalt.databinding.internal.property.DefaultProperty
 import org.hexworks.cobalt.datatypes.Maybe
 import kotlin.test.*
 
@@ -156,6 +155,8 @@ class DefaultPropertyTest {
 
         assertEquals(expected = QUX, actual = otherProperty.value)
     }
+
+
 
 
     companion object {
