@@ -7,7 +7,7 @@ import org.hexworks.cobalt.events.Subscription
 
 inline fun <T : Any> ObservableValue<T>.onChange(crossinline fn: (ChangeEvent<T>) -> Unit): Subscription {
     return onChange(object : ChangeListener<T> {
-        override fun changed(changeEvent: ChangeEvent<T>) {
+        override fun onChange(changeEvent: ChangeEvent<T>) {
             fn(changeEvent)
         }
     })

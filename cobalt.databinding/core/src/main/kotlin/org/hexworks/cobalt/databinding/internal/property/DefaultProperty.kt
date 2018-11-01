@@ -17,13 +17,12 @@ import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.fold
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.cobalt.datatypes.factory.IdentifierFactory
-import org.hexworks.cobalt.events.EventBus
 import org.hexworks.cobalt.events.Subscription
 
 @Suppress("UNCHECKED_CAST")
 class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
 
-    private val scope = ChangeEventScope(IdentifierFactory.randomIdentifier())
+    private val scope = ChangeEventScope()
     private val identityConverter = IdentityConverter<T>()
 
     private var currentValue = initialValue
@@ -40,7 +39,7 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
 
     override fun onChange(listener: ChangeListener<T>): Subscription {
         return Cobalt.eventbus.subscribe<ChangeEvent<T>>(scope) {
-            listener.changed(it)
+            listener.onChange(it)
         }
     }
 

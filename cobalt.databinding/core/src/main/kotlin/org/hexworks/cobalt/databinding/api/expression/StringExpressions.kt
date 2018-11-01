@@ -2,34 +2,27 @@ package org.hexworks.cobalt.databinding.api.expression
 
 import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
-
-fun ObservableValue<String>.isNull(): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.isNotNull(): Binding<Boolean> {
-    TODO()
-}
+import org.hexworks.cobalt.databinding.internal.binding.ComputedBiBinding
+import org.hexworks.cobalt.databinding.internal.binding.ComputedSingleBinding
 
 fun ObservableValue<String>.isEmpty(): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it.isEmpty() }
 }
 
-
 fun ObservableValue<String>.isNotEmpty(): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it.isNotEmpty() }
 }
 
 fun ObservableValue<String>.concat(other: Any): Binding<String> {
-    TODO()
+    return ComputedSingleBinding(this) { it + other }
 }
 
 fun ObservableValue<String>.isEqualTo(other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue == otherValue }
 }
 
 fun ObservableValue<String>.isEqualTo(other: String): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it == other }
 }
 
 fun ObservableValue<String>.isNotEqualTo(other: ObservableValue<String>): Binding<Boolean> {
