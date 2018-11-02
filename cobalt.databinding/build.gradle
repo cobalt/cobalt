@@ -42,6 +42,7 @@ kotlin {
 
         jvmMain {
             kotlin.srcDirs = ["jvm/src/main/kotlin"]
+            resources.srcDirs = ["jvm/src/main/resources"]
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
                 api project(":cobalt.datatypes")
@@ -51,6 +52,7 @@ kotlin {
 
         jvmTest {
             kotlin.srcDirs = ["jvm/src/test/kotlin"]
+            resources.srcDirs = ["jvm/src/test/resources"]
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
                 implementation 'org.jetbrains.kotlin:kotlin-test-junit'
@@ -60,7 +62,9 @@ kotlin {
 
         webMain {
             kotlin.srcDirs = ["web/src/main/kotlin"]
+            resources.srcDirs = ["web/src/main/resources"]
             dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
                 api group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-js', version: coroutines_version
                 api project(":cobalt.datatypes")
             }
@@ -68,6 +72,7 @@ kotlin {
 		
         webTest {
             kotlin.srcDirs = ["web/src/test/kotlin"]
+            resources.srcDirs = ["web/src/test/resources"]
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test-js'
                 dependsOn webMain

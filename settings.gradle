@@ -3,3 +3,5 @@ rootProject.name = "cobalt"
 include ":cobalt.databinding"
 include ":cobalt.datatypes"
 include ":cobalt.events"
+
+include ":examples.web"

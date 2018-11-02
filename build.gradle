@@ -21,6 +21,6 @@ allprojects {
     }
 }
 
-subprojects {
+configure(subprojects.findAll { it.name.startsWith("cobalt") }) {
     apply plugin: 'kotlin-multiplatform'
 }

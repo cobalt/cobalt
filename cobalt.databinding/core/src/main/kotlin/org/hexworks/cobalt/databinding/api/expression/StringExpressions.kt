@@ -13,8 +13,12 @@ fun ObservableValue<String>.isNotEmpty(): Binding<Boolean> {
     return ComputedSingleBinding(this) { it.isNotEmpty() }
 }
 
+fun ObservableValue<String>.concat(other: ObservableValue<String>): Binding<String> {
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue + otherValue }
+}
+
 fun ObservableValue<String>.concat(other: Any): Binding<String> {
-    return ComputedSingleBinding(this) { it + other }
+    return ComputedSingleBinding(this) { it + other.toString() }
 }
 
 fun ObservableValue<String>.isEqualTo(other: ObservableValue<String>): Binding<Boolean> {
@@ -26,63 +30,29 @@ fun ObservableValue<String>.isEqualTo(other: String): Binding<Boolean> {
 }
 
 fun ObservableValue<String>.isNotEqualTo(other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue != otherValue }
 }
 
 fun ObservableValue<String>.isNotEqualTo(other: String): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it != other }
 }
 
 fun ObservableValue<String>.isEqualToIgnoreCase(other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue.toLowerCase() == otherValue.toLowerCase() }
 }
 
 fun ObservableValue<String>.isEqualToIgnoreCase(other: String): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it.toLowerCase() == other.toLowerCase() }
 }
 
-fun ObservableValue<String>.isNotEqualToIgnoreCase(
-        other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
+fun ObservableValue<String>.isNotEqualToIgnoreCase(other: ObservableValue<String>): Binding<Boolean> {
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue.toLowerCase() != otherValue.toLowerCase() }
 }
 
 fun ObservableValue<String>.isNotEqualToIgnoreCase(other: String): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it.toLowerCase() != other.toLowerCase() }
 }
 
-fun ObservableValue<String>.greaterThan(other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.greaterThan(other: String): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.lessThan(other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.lessThan(other: String): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.greaterThanOrEqualTo(other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.greaterThanOrEqualTo(other: String): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.lessThanOrEqualTo(other: ObservableValue<String>): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<String>.lessThanOrEqualTo(other: String): Binding<Boolean> {
-    TODO()
-}
-
-// TODO: integer binding
 fun ObservableValue<String>.length(): Binding<Int> {
-    TODO()
+    return ComputedSingleBinding(this) { it.length }
 }

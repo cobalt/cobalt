@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.hexworks.cobalt.databinding.api.expression
 
 import org.hexworks.cobalt.databinding.api.binding.Binding
@@ -74,19 +76,19 @@ fun ObservableValue<Long>.divide(other: ObservableValue<Number>): Binding<Long> 
 }
 
 fun ObservableValue<Long>.divide(other: Double): Binding<Long> {
-    TODO()
+    return divide(other.toLong())
 }
 
 fun ObservableValue<Long>.divide(other: Float): Binding<Long> {
-    TODO()
+    return divide(other.toLong())
 }
 
 fun ObservableValue<Long>.divide(other: Long): Binding<Long> {
-    TODO()
+    return ComputedSingleBinding(this) { it / other }
 }
 
 fun ObservableValue<Long>.divide(other: Int): Binding<Long> {
-    TODO()
+    return divide(other.toLong())
 }
 
 fun ObservableValue<Long>.isEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
@@ -94,11 +96,19 @@ fun ObservableValue<Long>.isEqualTo(other: ObservableValue<Number>): Binding<Boo
 }
 
 fun ObservableValue<Long>.isEqualTo(other: Long): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it == other }
 }
 
 fun ObservableValue<Long>.isEqualTo(other: Int): Binding<Boolean> {
-    TODO()
+    return isEqualTo(other.toLong())
+}
+
+fun ObservableValue<Long>.isEqualTo(other: Float): Binding<Boolean> {
+    return isEqualTo(other.toLong())
+}
+
+fun ObservableValue<Long>.isEqualTo(other: Double): Binding<Boolean> {
+    return isEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.isNotEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
@@ -106,11 +116,19 @@ fun ObservableValue<Long>.isNotEqualTo(other: ObservableValue<Number>): Binding<
 }
 
 fun ObservableValue<Long>.isNotEqualTo(other: Long): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it != other }
+}
+
+fun ObservableValue<Long>.isNotEqualTo(other: Double): Binding<Boolean> {
+    return isNotEqualTo(other.toLong())
+}
+
+fun ObservableValue<Long>.isNotEqualTo(other: Float): Binding<Boolean> {
+    return isNotEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.isNotEqualTo(other: Int): Binding<Boolean> {
-    TODO()
+    return isNotEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.greaterThan(other: ObservableValue<Number>): Binding<Boolean> {
@@ -118,85 +136,81 @@ fun ObservableValue<Long>.greaterThan(other: ObservableValue<Number>): Binding<B
 }
 
 fun ObservableValue<Long>.greaterThan(other: Double): Binding<Boolean> {
-    TODO()
+    return greaterThan(other.toLong())
 }
 
 fun ObservableValue<Long>.greaterThan(other: Float): Binding<Boolean> {
-    TODO()
+    return greaterThan(other.toLong())
 }
 
 fun ObservableValue<Long>.greaterThan(other: Long): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it > other }
 }
 
 fun ObservableValue<Long>.greaterThan(other: Int): Binding<Boolean> {
-    TODO()
+    return greaterThan(other.toLong())
 }
 
 fun ObservableValue<Long>.lessThan(other: ObservableValue<Number>): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue < otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.lessThan(other: Double): Binding<Boolean> {
-    TODO()
+    return lessThan(other.toLong())
 }
 
 fun ObservableValue<Long>.lessThan(other: Float): Binding<Boolean> {
-    TODO()
+    return lessThan(other.toLong())
 }
 
 fun ObservableValue<Long>.lessThan(other: Long): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it < other }
 }
 
 fun ObservableValue<Long>.lessThan(other: Int): Binding<Boolean> {
-    TODO()
+    return lessThan(other.toLong())
 }
 
 fun ObservableValue<Long>.greaterThanOrEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue >= otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.greaterThanOrEqualTo(other: Double): Binding<Boolean> {
-    TODO()
+    return greaterThanOrEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.greaterThanOrEqualTo(other: Float): Binding<Boolean> {
-    TODO()
+    return greaterThanOrEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.greaterThanOrEqualTo(other: Long): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it >= other }
 }
 
 fun ObservableValue<Long>.greaterThanOrEqualTo(other: Int): Binding<Boolean> {
-    TODO()
+    return greaterThanOrEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.lessThanOrEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue <= otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.lessThanOrEqualTo(other: Double): Binding<Boolean> {
-    TODO()
+    return lessThanOrEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.lessThanOrEqualTo(other: Float): Binding<Boolean> {
-    TODO()
+    return lessThanOrEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.lessThanOrEqualTo(other: Long): Binding<Boolean> {
-    TODO()
+    return ComputedSingleBinding(this) { it <= other }
 }
 
 fun ObservableValue<Long>.lessThanOrEqualTo(other: Int): Binding<Boolean> {
-    TODO()
+    return lessThanOrEqualTo(other.toLong())
 }
 
 fun ObservableValue<Long>.asString(): Binding<String> {
-    TODO()
-}
-
-fun ObservableValue<Long>.asString(format: String): Binding<String> {
-    TODO()
+    return ComputedSingleBinding(this) { it.toString() }
 }
