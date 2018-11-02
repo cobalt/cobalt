@@ -1,4 +1,4 @@
-package org.hexworks.cobalt.events
+package org.hexworks.cobalt.events.api
 
 /**
  * Represents a subscription to some kind of event.

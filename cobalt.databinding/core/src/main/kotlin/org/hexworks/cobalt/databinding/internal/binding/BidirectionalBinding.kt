@@ -8,7 +8,7 @@ import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.databinding.internal.extensions.runWithDisposeOnFailure
-import org.hexworks.cobalt.events.Subscription
+import org.hexworks.cobalt.events.api.Subscription
 
 class BidirectionalBinding<out T : Any>(private val source: Property<T>,
                                         private val target: Property<T>) : Binding<T> {

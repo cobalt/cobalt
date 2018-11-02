@@ -16,8 +16,7 @@ import org.hexworks.cobalt.databinding.internal.binding.BidirectionalConverterBi
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.cobalt.datatypes.extensions.fold
 import org.hexworks.cobalt.datatypes.extensions.map
-import org.hexworks.cobalt.datatypes.factory.IdentifierFactory
-import org.hexworks.cobalt.events.Subscription
+import org.hexworks.cobalt.events.api.Subscription
 
 @Suppress("UNCHECKED_CAST")
 class DefaultProperty<T : Any>(initialValue: T) : Property<T> {

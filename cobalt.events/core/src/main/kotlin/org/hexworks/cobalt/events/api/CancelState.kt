@@ -1,4 +1,4 @@
-package org.hexworks.cobalt.events
+package org.hexworks.cobalt.events.api
 
 sealed class CancelState(val cancelled: Boolean)
 

@@ -1,4 +1,4 @@
-package org.hexworks.cobalt.events
+package org.hexworks.cobalt.events.api
 
 /**
  * Used to scope [Event]s. Each [EventScope] has a separate

@@ -11,7 +11,7 @@ import org.hexworks.cobalt.databinding.api.event.ChangeListener
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
 import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
-import org.hexworks.cobalt.events.Subscription
+import org.hexworks.cobalt.events.api.Subscription
 
 class ComputedBiBinding<out T : Any, out U : Any, V : Any>(private val value0: ObservableValue<T>,
                                                            private val value1: ObservableValue<U>,

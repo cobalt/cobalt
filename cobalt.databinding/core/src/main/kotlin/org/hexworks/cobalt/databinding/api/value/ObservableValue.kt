@@ -1,7 +1,7 @@
 package org.hexworks.cobalt.databinding.api.value
 
 import org.hexworks.cobalt.databinding.api.event.ChangeListener
-import org.hexworks.cobalt.events.Subscription
+import org.hexworks.cobalt.events.api.Subscription
 
 /**
  * An [ObservableValue] is an entity that wraps a value and allows to

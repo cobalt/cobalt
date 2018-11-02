@@ -1,6 +1,6 @@
-package org.hexworks.cobalt.events
+package org.hexworks.cobalt.events.api
 
-import org.hexworks.cobalt.events.impl.ApplicationScope
+import org.hexworks.cobalt.events.internal.ApplicationScope
 
 /**
  * An [EventBus] can be used to `broadcast` [Event]s to subscribers of that
@@ -17,7 +17,7 @@ class EventBus {
      * Subscribes the callee to [Event]s of type [T].
      */
     inline fun <reified T : Event> subscribe(eventScope: EventScope = ApplicationScope,
-                                             noinline callback: (T) -> Unit): Subscription {
+                                                                            noinline callback: (T) -> Unit): Subscription {
         val key = T::class.simpleName ?: throw IllegalArgumentException(
                 "Event class doesn't have a name: ${T::class}")
         return subscribe(eventScope = eventScope,
@@ -31,8 +31,8 @@ class EventBus {
      * `object`s.
      */
     fun <T : Event> subscribe(eventScope: EventScope = ApplicationScope,
-                              key: String,
-                              callback: (T) -> Unit): Subscription {
+                                                             key: String,
+                                                             callback: (T) -> Unit): Subscription {
         val subscription = EventBusSubscription(
                 eventScope = eventScope,
                 key = key,

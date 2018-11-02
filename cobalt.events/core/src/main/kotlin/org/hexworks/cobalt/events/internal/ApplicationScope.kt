@@ -1,6 +1,6 @@
-package org.hexworks.cobalt.events.impl
+package org.hexworks.cobalt.events.internal
 
-import org.hexworks.cobalt.events.EventScope
+import org.hexworks.cobalt.events.api.EventScope
 
 /**
  * Default [EventScope] which is used as a default in the

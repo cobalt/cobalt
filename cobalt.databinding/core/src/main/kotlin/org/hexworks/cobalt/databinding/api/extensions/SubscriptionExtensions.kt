@@ -1,6 +1,6 @@
 package org.hexworks.cobalt.databinding.api.extensions
 
-import org.hexworks.cobalt.events.Subscription
+import org.hexworks.cobalt.events.api.Subscription
 
 fun <T : Subscription> MutableList<T>.clearSubscriptions() {
     forEach {
