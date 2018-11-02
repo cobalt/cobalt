@@ -8,7 +8,7 @@ import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.databinding.api.converter.BiConverter
 import org.hexworks.cobalt.databinding.internal.extensions.runWithDisposeOnFailure
-import org.hexworks.cobalt.events.Subscription
+import org.hexworks.cobalt.events.api.Subscription
 
 class BidirectionalConverterBinding<out S : Any, out T : Any>(
         private val source: Property<S>,

@@ -1,10 +1,10 @@
 package org.hexworks.kobalt.events
 
-import org.hexworks.cobalt.events.CancelledByException
-import org.hexworks.cobalt.events.Event
-import org.hexworks.cobalt.events.EventBus
-import org.hexworks.cobalt.events.EventScope
-import org.hexworks.cobalt.events.impl.ApplicationScope
+import org.hexworks.cobalt.events.api.CancelledByException
+import org.hexworks.cobalt.events.api.Event
+import org.hexworks.cobalt.events.api.EventBus
+import org.hexworks.cobalt.events.api.EventScope
+import org.hexworks.cobalt.events.internal.ApplicationScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
