@@ -26,51 +26,51 @@ fun ObservableValue<Long>.add(other: Int): Binding<Long> {
 }
 
 fun ObservableValue<Long>.add(other: Long): Binding<Long> {
-    return ComputedSingleBinding(this) {it + other}
+    return ComputedSingleBinding(this) { it + other }
 }
 
 fun ObservableValue<Long>.subtract(other: ObservableValue<Number>): Binding<Long> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue - otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.subtract(other: Double): Binding<Long> {
-    TODO()
+    return subtract(other.toLong())
 }
 
 fun ObservableValue<Long>.subtract(other: Float): Binding<Long> {
-    TODO()
+    return subtract(other.toLong())
 }
 
 fun ObservableValue<Long>.subtract(other: Long): Binding<Long> {
-    TODO()
+    return ComputedSingleBinding(this) { it - other }
 }
 
 fun ObservableValue<Long>.subtract(other: Int): Binding<Long> {
-    TODO()
+    return subtract(other.toLong())
 }
 
 fun ObservableValue<Long>.multiply(other: ObservableValue<Number>): Binding<Long> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue * otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.multiply(other: Double): Binding<Long> {
-    TODO()
+    return multiply(other.toLong())
 }
 
 fun ObservableValue<Long>.multiply(other: Float): Binding<Long> {
-    TODO()
+    return multiply(other.toLong())
 }
 
 fun ObservableValue<Long>.multiply(other: Long): Binding<Long> {
-    TODO()
+    return ComputedSingleBinding(this) { it * other }
 }
 
 fun ObservableValue<Long>.multiply(other: Int): Binding<Long> {
-    TODO()
+    return multiply(other.toLong())
 }
 
 fun ObservableValue<Long>.divide(other: ObservableValue<Number>): Binding<Long> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue / otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.divide(other: Double): Binding<Long> {
@@ -90,26 +90,10 @@ fun ObservableValue<Long>.divide(other: Int): Binding<Long> {
 }
 
 fun ObservableValue<Long>.isEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isEqualTo(other: ObservableValue<Number>, epsilon: Double): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isEqualTo(other: Double, tolerance: Double): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isEqualTo(other: Float, tolerance: Double): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue == otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.isEqualTo(other: Long): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isEqualTo(other: Long, epsilon: Double): Binding<Boolean> {
     TODO()
 }
 
@@ -117,31 +101,11 @@ fun ObservableValue<Long>.isEqualTo(other: Int): Binding<Boolean> {
     TODO()
 }
 
-fun ObservableValue<Long>.isEqualTo(other: Int, tolerance: Double): Binding<Boolean> {
-    TODO()
-}
-
 fun ObservableValue<Long>.isNotEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isNotEqualTo(other: ObservableValue<Number>, tolerance: Double): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isNotEqualTo(other: Double, tolerance: Double): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isNotEqualTo(other: Float, tolerance: Double): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue != otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.isNotEqualTo(other: Long): Binding<Boolean> {
-    TODO()
-}
-
-fun ObservableValue<Long>.isNotEqualTo(other: Long, tolerance: Double): Binding<Boolean> {
     TODO()
 }
 
@@ -149,12 +113,8 @@ fun ObservableValue<Long>.isNotEqualTo(other: Int): Binding<Boolean> {
     TODO()
 }
 
-fun ObservableValue<Long>.isNotEqualTo(other: Int, tolerance: Double): Binding<Boolean> {
-    TODO()
-}
-
 fun ObservableValue<Long>.greaterThan(other: ObservableValue<Number>): Binding<Boolean> {
-    TODO()
+    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue > otherValue.toLong() }
 }
 
 fun ObservableValue<Long>.greaterThan(other: Double): Binding<Boolean> {
