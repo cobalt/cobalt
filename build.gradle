@@ -5,22 +5,23 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0"
     }
 }
 
 allprojects {
     group "org.hexworks.cobalt"
-    version "2018.1.1-PREVIEW"
+    version "2018.0.1-BETA" 
 
     repositories {
         mavenCentral()
         mavenLocal()
         jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
+        maven { url "https://dl.bintray.com/kotlin/kotlinx" }
     }
 }
 
-configure(subprojects.findAll { it.name.startsWith("cobalt") }) {
-    apply plugin: 'kotlin-multiplatform'
+subprojects {
+    apply plugin: "kotlin-multiplatform"
+    apply plugin: "maven-publish"
 }
