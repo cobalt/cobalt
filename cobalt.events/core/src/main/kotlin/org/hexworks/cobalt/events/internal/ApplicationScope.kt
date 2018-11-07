@@ -4,7 +4,7 @@ import org.hexworks.cobalt.events.api.EventScope
 
 /**
  * Default [EventScope] which is used as a default in the
- * [org.hexworks.cobalt.events.EventBus] and is a suitable
- * default scope for user-broadcasted [org.hexworks.cobalt.events.Event]s.
+ * [org.hexworks.cobalt.events.api.EventBus] and is a suitable
+ * default scope for user-broadcasted [org.hexworks.cobalt.events.api.Event]s.
  */
 object ApplicationScope : EventScope

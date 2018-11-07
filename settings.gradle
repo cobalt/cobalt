@@ -1,7 +1,10 @@
+enableFeaturePreview('GRADLE_METADATA')
+
 rootProject.name = "cobalt"
 
 include ":cobalt.databinding"
 include ":cobalt.datatypes"
 include ":cobalt.events"
-
-include ":examples.web"
+include ":cobalt.html"
+include ":cobalt.networking"
+include ":cobalt.mvc"

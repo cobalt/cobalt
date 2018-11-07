@@ -5,6 +5,10 @@ package org.hexworks.cobalt.events.api
  */
 interface Subscription {
 
+    /**
+     * Tells whether this [Subscription] was cancelled or not.
+     * Shorthand for [CancelState.cancelled].
+     */
     val cancelled: Boolean
         get() = cancelState.cancelled
 
