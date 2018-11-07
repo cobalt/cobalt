@@ -1,9 +1,9 @@
 package org.hexworks.cobalt.datatypes.extensions
 
-import org.hexworks.cobalt.datatypes.Consumer
-import org.hexworks.cobalt.datatypes.Function
+import org.hexworks.cobalt.datatypes.sam.Consumer
+import org.hexworks.cobalt.datatypes.sam.Function
 import org.hexworks.cobalt.datatypes.Maybe
-import org.hexworks.cobalt.datatypes.Supplier
+import org.hexworks.cobalt.datatypes.sam.Supplier
 
 /**
  * Extension function which adapts [Maybe.ifPresent] to
@@ -22,7 +22,7 @@ inline fun <T> Maybe<T>.ifPresent(crossinline fn: (T) -> Unit) {
  * Kotlin idioms (eg: lambdas).
  */
 inline fun <T, U> Maybe<T>.map(crossinline fn: (T) -> U): Maybe<U> {
-    return map(object : org.hexworks.cobalt.datatypes.Function<T, U> {
+    return map(object : Function<T, U> {
         override fun apply(param: T): U {
             return fn.invoke(param)
         }
@@ -34,7 +34,7 @@ inline fun <T, U> Maybe<T>.map(crossinline fn: (T) -> U): Maybe<U> {
  * Kotlin idioms (eg: lambdas).
  */
 inline fun <T, U> Maybe<T>.flatMap(crossinline fn: (T) -> Maybe<U>): Maybe<U> {
-    return flatMap(object : org.hexworks.cobalt.datatypes.Function<T, Maybe<U>> {
+    return flatMap(object : Function<T, Maybe<U>> {
         override fun apply(param: T): Maybe<U> {
             return fn.invoke(param)
         }

@@ -1,5 +1,9 @@
 package org.hexworks.cobalt.datatypes
 
+import org.hexworks.cobalt.datatypes.sam.Consumer
+import org.hexworks.cobalt.datatypes.sam.Function
+import org.hexworks.cobalt.datatypes.sam.Supplier
+
 
 @Suppress("UNCHECKED_CAST")
 class Maybe<T> {
