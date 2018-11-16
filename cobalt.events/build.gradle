@@ -21,8 +21,8 @@ kotlin {
 
     sourceSets {
         commonMain {
-            kotlin.srcDirs = ["core/src/main/kotlin"]
-            resources.srcDirs = ["core/src/main/resources"]
+            kotlin.srcDirs = ["common/src/main/kotlin"]
+            resources.srcDirs = ["common/src/main/resources"]
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation 'org.jetbrains.kotlin:kotlin-reflect'
@@ -31,8 +31,8 @@ kotlin {
             }
         }
         commonTest {
-            kotlin.srcDirs = ["core/src/test/kotlin"]
-            resources.srcDirs = ["core/src/test/resources"]
+            kotlin.srcDirs = ["common/src/test/kotlin"]
+            resources.srcDirs = ["common/src/test/resources"]
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test-common'
                 implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
