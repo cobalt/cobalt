@@ -6,12 +6,13 @@ import org.hexworks.cobalt.logging.api.warn
 
 class DefaultEventBus : EventBus {
 
-    override val subscribers: List<Pair<EventScope, String>>
-        get() = subscriptions.keys.toList()
-
     private val logger = LoggerFactory.getLogger(this::class)
     private val subscriptions: ThreadSafeMap<Pair<EventScope, String>, ThreadSafeQueue<EventBusSubscription<*>>> =
             ThreadSafeMapFactory.create()
+
+    override fun subscribersFor(eventScope: EventScope, key: String): Collection<Subscription> {
+        return subscriptions.getOrDefault(eventScope to key, ThreadSafeQueueFactory.create())
+    }
 
     override fun <T : Event> subscribe(eventScope: EventScope,
                                        key: String,
@@ -98,9 +99,10 @@ class DefaultEventBus : EventBus {
         override fun cancel(cancelState: CancelState) {
             try {
                 logger.warn {
-                    "Cancelling event bus subscription."
+                    "Cancelling event bus subscription with scope '$eventScope' and key '$key'."
                 }
-                subscriptions.remove(eventScope to key)
+                subscriptions.getOrDefault(eventScope to key, ThreadSafeQueueFactory.create())
+                        .remove(this)
                 this.cancelState = cancelState
             } catch (e: Exception) {
                 logger.warn("Cancelling event bus subscription failed.", e)

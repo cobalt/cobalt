@@ -4,11 +4,49 @@ import org.hexworks.cobalt.events.api.*
 import org.hexworks.cobalt.events.internal.ApplicationScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @Suppress("TestFunctionName", "FunctionName")
 class EventBusTest {
 
     private val target = EventBus.create()
+
+    @Test
+    fun When_a_subscription_for_a_scope_and_key_is_cancelled_other_subscriptions_for_the_same_combination_shouldnt_be_cancelled() {
+
+
+        val subscription0 = target.subscribe<TestEvent> {
+        }
+        val subscription1 = target.subscribe<TestEvent> {
+        }
+
+        subscription0.cancel()
+
+        assertFalse(subscription1.cancelled)
+
+    }
+
+    @Test
+    fun When_a_subscription_for_a_scope_and_key_is_cancelled_other_subscriptions_for_the_same_combination_should_be_notified_when_an_event_is_published() {
+
+        var sub0Notified = false
+        var sub1Notified = false
+
+        val subscription0 = target.subscribe<TestEvent> {
+            sub0Notified = true
+        }
+        val subscription1 = target.subscribe<TestEvent> {
+            sub1Notified = true
+        }
+
+        subscription0.cancel()
+        target.publish(TestEvent)
+
+        assertFalse(sub0Notified)
+        assertTrue(sub1Notified)
+
+    }
 
     @Test
     fun When_subscribed_to_an_event_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
@@ -102,7 +140,7 @@ class EventBusTest {
 
         target.subscribe<TestEvent> { }.cancel()
 
-        assertEquals(listOf(), target.subscribers, "Subscribers should be empty.")
+        assertEquals(listOf(), target.subscribersFor(ApplicationScope, TestEvent.key).toList(), "Subscribers should be empty.")
 
     }
 

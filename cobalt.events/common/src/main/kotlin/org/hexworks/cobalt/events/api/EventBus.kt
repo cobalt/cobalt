@@ -9,7 +9,7 @@ import org.hexworks.cobalt.events.internal.DefaultEventBus
  */
 interface EventBus {
 
-    val subscribers: List<Pair<EventScope, String>>
+    fun subscribersFor(eventScope: EventScope, key: String): Collection<Subscription>
 
     /**
      * Subscribes the callee to [Event]s which have the same [Event.key]
