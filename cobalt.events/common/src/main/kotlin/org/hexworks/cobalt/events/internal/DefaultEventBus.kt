@@ -2,7 +2,7 @@ package org.hexworks.cobalt.events.internal
 
 import org.hexworks.cobalt.events.api.*
 import org.hexworks.cobalt.logging.api.LoggerFactory
-import org.hexworks.cobalt.logging.api.warn
+import org.hexworks.cobalt.logging.api.debug
 
 class DefaultEventBus : EventBus {
 
@@ -18,7 +18,7 @@ class DefaultEventBus : EventBus {
                                        key: String,
                                        callback: (T) -> Unit): Subscription {
         return try {
-            logger.warn {
+            logger.debug {
                 "Subscribing to '$key' with scope '$eventScope'."
             }
             val subscription = EventBusSubscription(
@@ -34,28 +34,21 @@ class DefaultEventBus : EventBus {
         }
     }
 
-    override fun broadcast(event: Event, eventScope: EventScope) {
-        publish(event, eventScope)
-    }
-
     @Suppress("UNCHECKED_CAST")
     override fun publish(event: Event,
                          eventScope: EventScope) {
-        logger.warn {
+        logger.debug {
             "Publishing Event with key '${event.key}' and scope '$eventScope'."
         }
         val failedSubscriptions = mutableListOf<Pair<Subscription, Exception>>()
         subscriptions[eventScope to event.key]?.let { subscribers ->
             subscribers.forEach { subscription ->
                 try {
-                    logger.warn {
+                    logger.debug {
                         "Trying to invoke callback for event."
                     }
                     (subscription.callback as (Event) -> Unit).invoke(event)
                 } catch (e: Exception) {
-                    logger.warn {
-                        "Failed to invoke callback. Adding it to failed subscriptions."
-                    }
                     failedSubscriptions.add(subscription to e)
                 }
             }
@@ -73,7 +66,7 @@ class DefaultEventBus : EventBus {
     }
 
     override fun cancelScope(scope: EventScope) {
-        logger.warn {
+        logger.debug {
             "Cancelling scope '$scope'."
         }
         subscriptions.filterKeys { it.first == scope }
@@ -98,7 +91,7 @@ class DefaultEventBus : EventBus {
 
         override fun cancel(cancelState: CancelState) {
             try {
-                logger.warn {
+                logger.debug {
                     "Cancelling event bus subscription with scope '$eventScope' and key '$key'."
                 }
                 subscriptions.getOrDefault(eventScope to key, ThreadSafeQueueFactory.create())

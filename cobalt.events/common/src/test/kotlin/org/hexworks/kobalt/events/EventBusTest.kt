@@ -163,5 +163,4 @@ class EventBusTest {
     object TestEvent : Event
 
     object TestScope : EventScope
-
 }

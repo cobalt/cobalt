@@ -27,16 +27,6 @@ interface EventBus {
                 eventScope: EventScope = ApplicationScope)
 
     /**
-     * Publishes the given [Event] to all listeners who have the same
-     * [EventScope] and [Event.key].
-     */
-    @Deprecated(
-            replaceWith = ReplaceWith("publish(event, eventScope)"),
-            message = "Inconsistent with publish/subscribe. Use publish instead.")
-    fun broadcast(event: Event,
-                  eventScope: EventScope = ApplicationScope)
-
-    /**
      * Cancels all [Subscription]s for a given [EventScope].
      */
     fun cancelScope(scope: EventScope)
