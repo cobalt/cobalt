@@ -27,6 +27,26 @@ interface EventBus {
                 eventScope: EventScope = ApplicationScope)
 
     /**
+     * Sends the given [Event] to a listener which has the same
+     * [EventScope] and [Event.key] and consumes the result
+     * using the given `callback`.
+     * @see SubmitResult
+     */
+    fun <T : Event, U : Any> send(event: T,
+                                  eventScope: EventScope = ApplicationScope,
+                                  callback: (SubmitResult<U>) -> Unit)
+
+    /**
+     * Subscribes the callee to [Event]s which have the same [EventScope] and [Event.key]
+     * with the given `processorFn`. When an event of type [T] arrives to this
+     * [EventBus] `processorFn` will be called and its result will be routed to the
+     * sender of the event.
+     */
+    fun <T : Event, U : Any> process(eventScope: EventScope = ApplicationScope,
+                                     key: String,
+                                     processorFn: (T) -> U): Subscription
+
+    /**
      * Cancels all [Subscription]s for a given [EventScope].
      */
     fun cancelScope(scope: EventScope)

@@ -160,6 +160,20 @@ class EventBusTest {
                 message = "Subscriber should have been cancelled with exception")
     }
 
+    @Test
+    fun Test() {
+        val expectedResult = "foo"
+        target.process<TestEvent, String> {
+            expectedResult
+        }
+        var actualResult = ""
+        target.send<TestEvent, String>(TestEvent) { (result) ->
+            actualResult = result
+        }
+
+        assertEquals(expected = expectedResult, actual = actualResult)
+    }
+
     object TestEvent : Event
 
     object TestScope : EventScope
