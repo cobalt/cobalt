@@ -56,10 +56,8 @@ class DefaultEventBus : EventBus {
                 }
             }
         }
-        if (failedSubscriptions.size > 0) {
-            logger.warn("Cancelling failed subscriptions.")
-        }
         failedSubscriptions.forEach { (subscription, e) ->
+            logger.warn("Cancelling failed subscription.", e)
             try {
                 subscription.cancel(CancelledByException(e))
             } catch (e: Exception) {
