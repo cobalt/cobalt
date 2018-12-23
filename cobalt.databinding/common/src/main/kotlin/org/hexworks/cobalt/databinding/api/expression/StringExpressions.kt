@@ -13,6 +13,10 @@ fun ObservableValue<String>.isNotEmpty(): Binding<Boolean> {
     return ComputedSingleBinding(this) { it.isNotEmpty() }
 }
 
+fun <T : Any> ObservableValue<String>.concatWithConvert(other: ObservableValue<T>, converter: (ObservableValue<T>) -> String = { it.value.toString() }): Binding<String> {
+    return ComputedBiBinding(this, other) { thisValue, _ -> thisValue + converter(other) }
+}
+
 fun ObservableValue<String>.concat(other: ObservableValue<String>): Binding<String> {
     return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue + otherValue }
 }
