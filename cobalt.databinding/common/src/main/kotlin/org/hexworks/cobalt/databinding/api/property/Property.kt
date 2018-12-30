@@ -5,6 +5,7 @@ import org.hexworks.cobalt.databinding.api.converter.BiConverter
 import org.hexworks.cobalt.databinding.api.converter.Converter
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.databinding.api.value.WritableValue
+import org.hexworks.cobalt.databinding.internal.property.DefaultPropertyDelegate
 
 /**
  * A [Property] wraps a value which can be *read*, *written*, *observed*
@@ -58,5 +59,7 @@ interface Property<T : Any> : WritableValue<T>, ObservableValue<T> {
      * given observable.
      */
     fun <U : Any> bindBidirectional(other: Property<U>, converter: BiConverter<T, U>): Binding<T>
+
+    fun asDelegate(): PropertyDelegate<T> = DefaultPropertyDelegate(this)
 
 }

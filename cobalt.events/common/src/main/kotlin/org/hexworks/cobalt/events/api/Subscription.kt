@@ -1,8 +1,5 @@
 package org.hexworks.cobalt.events.api
 
-import org.hexworks.cobalt.events.api.CancelState
-import org.hexworks.cobalt.events.api.CancelledByHand
-
 /**
  * Represents a subscription to some kind of event.
  */
