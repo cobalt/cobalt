@@ -10,7 +10,7 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
 
     override fun isTraceEnabled() = logger.isTraceEnabled
 
-    override fun isDebugEnabled() = logger.isTraceEnabled
+    override fun isDebugEnabled() = logger.isDebugEnabled
 
     override fun isInfoEnabled() = logger.isInfoEnabled
 

@@ -11,7 +11,7 @@ buildscript {
 
 allprojects {
     group "org.hexworks.cobalt"
-    version "2018.1.0-PREVIEW"
+    version "2018.1.1-PREVIEW"
     repositories {
         mavenCentral()
         mavenLocal()
