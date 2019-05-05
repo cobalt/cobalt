@@ -7,7 +7,7 @@ import org.hexworks.cobalt.databinding.api.value.ObservableValue
 /**
  * A [Binding] computes its value based on the value of its dependencies.
  * A binding is subscribed to the changes of its dependencies and updates
- * its value whenever a change happens.
+ * its value whenever any of them changes.
  */
 interface Binding<out T : Any> : ObservableValue<T> {
 
@@ -29,6 +29,8 @@ interface Binding<out T : Any> : ObservableValue<T> {
      * Default is [DisposedByHand].
      */
     fun dispose(disposeState: DisposeState = DisposedByHand)
+
+    fun onDispose(fn: (Binding<T>, DisposeState) -> Unit)
 
     companion object
 }

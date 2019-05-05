@@ -1,20 +1,19 @@
 package org.hexworks.cobalt.databinding.internal.binding
 
-import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.internal.property.DefaultProperty
 import kotlin.test.*
 
 @Suppress("FunctionName")
 class ComputedBiBindingTest {
 
-    lateinit var target: ComputedBiBinding<String, Int, Boolean>
+    lateinit var target: ComputedDualBinding<String, Int, Boolean>
 
     private val stringValue = DefaultProperty(ONE)
     private val intValue = DefaultProperty(1)
 
     @BeforeTest
     fun Set_up() {
-        target = ComputedBiBinding(stringValue, intValue) { str, int ->
+        target = ComputedDualBinding(stringValue, intValue) { str, int ->
             str.toInt() == int
         }
     }

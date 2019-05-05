@@ -7,9 +7,7 @@ import org.hexworks.cobalt.databinding.api.data.DisposedByException
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
-import org.hexworks.cobalt.databinding.api.event.ChangeListener
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
-import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribe

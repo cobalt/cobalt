@@ -7,16 +7,14 @@ import org.hexworks.cobalt.databinding.api.data.DisposedByException
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
-import org.hexworks.cobalt.databinding.api.event.ChangeListener
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
-import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribe
 
-class ComputedBiBinding<out T : Any, out U : Any, V : Any>(private val value0: ObservableValue<T>,
-                                                           private val value1: ObservableValue<U>,
-                                                           private val computerFn: (T, U) -> V) : Binding<V> {
+class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0: ObservableValue<T>,
+                                                             private val value1: ObservableValue<U>,
+                                                             private val computerFn: (T, U) -> V) : Binding<V> {
 
     private val scope = ChangeEventScope()
 
@@ -47,10 +45,14 @@ class ComputedBiBinding<out T : Any, out U : Any, V : Any>(private val value0: O
         listeners.clearSubscriptions()
     }
 
-    override fun onChange(listener: ChangeListener<V>): Subscription {
+    override fun onChange(fn: (ChangeEvent<V>) -> Unit): Subscription {
         return Cobalt.eventbus.subscribe<ChangeEvent<V>>(scope) {
-            listener.onChange(it)
+            fn(it)
         }
+    }
+
+    override fun onDispose(fn: (Binding<V>, DisposeState) -> Unit) {
+        TODO("not implemented")
     }
 
     private fun doCalculate(): V {

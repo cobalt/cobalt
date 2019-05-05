@@ -1,11 +1,11 @@
 package org.hexworks.cobalt.databinding.api.property
 
 import org.hexworks.cobalt.databinding.api.binding.Binding
-import org.hexworks.cobalt.databinding.api.converter.BiConverter
-import org.hexworks.cobalt.databinding.api.converter.Converter
+import org.hexworks.cobalt.databinding.api.converter.IsomorphicConverter
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.databinding.api.value.WritableValue
 import org.hexworks.cobalt.databinding.internal.property.DefaultPropertyDelegate
+import org.hexworks.cobalt.events.api.Subscription
 
 /**
  * A [Property] wraps a value which can be *read*, *written*, *observed*
@@ -29,37 +29,33 @@ interface Property<T : Any> : WritableValue<T>, ObservableValue<T> {
     fun isBound(): Boolean
 
     /**
-     * Binds the value of this [Property] to the value of the given [ObservableValue].
-     * **Note that** any previous unidirectional bindings created with [Property.bind]
-     * will be disposed.
+     * Starts updating this [Property] from the given [observable].
+     * @return a [Subscription] which can be cancelled to stop the updates
      */
-    fun bind(observable: ObservableValue<T>)
+    infix fun updateFrom(observable: ObservableValue<T>): Subscription
 
     /**
-     * Binds the value of this [Property] to the value of the given [ObservableValue]
-     * of type [U]. Uses the given [Converter] to convert the value of of the
-     * given observable.
+     * Starts updating this [Property] from the given [observable].
+     * Uses the given [converter] to convert the values
+     * @return a [Subscription] which can be cancelled to stop the updates
      */
-    fun <U : Any> bind(observable: ObservableValue<U>, converter: Converter<U, T>)
-
-    /**
-     * Removes the unidirectional binding for this [Property] (if any).
-     * If the [Property] is not bound, calling this method has no effect.
-     */
-    fun unbind()
+    fun <U : Any> updateFrom(observable: ObservableValue<U>, converter: (U) -> T): Subscription
 
     /**
      * Creates a bidirectional binding between this [Property] and another one.
      */
-    fun bindBidirectional(other: Property<T>): Binding<T>
+    infix fun bind(other: Property<T>): Binding<T>
 
     /**
-     * Binds the value of this [Property] to the value of the given [ObservableValue]
-     * of type [U] **bidirectionally**. Uses the given [Converter] to convert the value of of the
-     * given observable.
+     * **Binds** the value of this [Property] to the value of the [other] [Property].
+     * Uses the given [IsomorphicConverter] to convert the values between the
+     * subject properties.
      */
-    fun <U : Any> bindBidirectional(other: Property<U>, converter: BiConverter<T, U>): Binding<T>
+    fun <U : Any> bind(other: Property<U>, converter: IsomorphicConverter<T, U>): Binding<T>
 
+    /**
+     * Creates a [PropertyDelegate] for this [Property].
+     */
     fun asDelegate(): PropertyDelegate<T> = DefaultPropertyDelegate(this)
 
 }

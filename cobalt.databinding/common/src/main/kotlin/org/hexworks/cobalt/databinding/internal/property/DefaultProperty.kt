@@ -2,20 +2,12 @@ package org.hexworks.cobalt.databinding.internal.property
 
 import org.hexworks.cobalt.databinding.api.Cobalt
 import org.hexworks.cobalt.databinding.api.binding.Binding
-import org.hexworks.cobalt.databinding.api.converter.BiConverter
-import org.hexworks.cobalt.databinding.api.converter.Converter
-import org.hexworks.cobalt.databinding.api.converter.IdentityConverter
+import org.hexworks.cobalt.databinding.api.converter.IsomorphicConverter
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
-import org.hexworks.cobalt.databinding.api.event.ChangeListener
-import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
-import org.hexworks.cobalt.databinding.internal.binding.BidirectionalBinding
 import org.hexworks.cobalt.databinding.internal.binding.BidirectionalConverterBinding
-import org.hexworks.cobalt.datatypes.Maybe
-import org.hexworks.cobalt.datatypes.extensions.fold
-import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribe
 
@@ -23,10 +15,15 @@ import org.hexworks.cobalt.events.api.subscribe
 class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
 
     private val scope = ChangeEventScope()
-    private val identityConverter = IdentityConverter<T>()
+    private val identityConverter = object : IsomorphicConverter<T, T> {
+
+        override fun convert(source: T) = source
+
+        override fun convertBack(target: T) = target
+    }
 
     private var currentValue = initialValue
-    private var bindingSubscription = Maybe.empty<Subscription>()
+    private val subscriptions = mutableListOf<Subscription>()
 
     override var value: T
         get() = currentValue
@@ -37,61 +34,44 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
             updateCurrentValue(value)
         }
 
-    override fun onChange(listener: ChangeListener<T>): Subscription {
+    override fun onChange(fn: (ChangeEvent<T>) -> Unit): Subscription {
         return Cobalt.eventbus.subscribe<ChangeEvent<T>>(scope) {
-            listener.onChange(it)
+            fn(it)
         }
     }
 
-    override fun isBound() = bindingSubscription.isPresent
+    override fun isBound() = subscriptions.isEmpty().not()
 
-    override fun bind(observable: ObservableValue<T>) {
-        bind(observable, identityConverter)
+    override fun updateFrom(observable: ObservableValue<T>): Subscription {
+        return updateFrom(observable) { it }
     }
 
-    override fun <U : Any> bind(observable: ObservableValue<U>, converter: Converter<U, T>) {
-        this.bindingSubscription.fold(whenEmpty = {
-            if (observable !== this) {
-                doBind(observable, converter)
-            }
-        }, whenPresent = { oldValue ->
-            if (oldValue !== observable) {
-                doBind(observable, converter)
-            }
-        })
-    }
-
-    override fun unbind() {
-        bindingSubscription.map { subscription ->
-            subscription.cancel()
-            bindingSubscription = Maybe.empty()
+    override fun <U : Any> updateFrom(
+            observable: ObservableValue<U>,
+            converter: (U) -> T): Subscription {
+        checkSelfBinding(observable)
+        return observable.onChange {
+            this.value = converter(it.newValue)
+        }.also {
+            // TODO: fix subscriptions
+            subscriptions.add(it)
         }
     }
 
-    override fun bindBidirectional(other: Property<T>): Binding<T> {
-        require(this !== other) {
-            "Can't bind a property to itself."
-        }
-        // TODO: transaction
-        this.value = other.value
-        return BidirectionalBinding(this, other)
+    override fun bind(other: Property<T>): Binding<T> {
+        return bind(other, identityConverter)
     }
 
-    override fun <U : Any> bindBidirectional(other: Property<U>, converter: BiConverter<T, U>): Binding<T> {
-        require(this !== other) {
-            "Can't bind a property to itself."
-        }
-        // TODO: transaction
-        this.value = converter.convertTargetToSource(other.value)
+    override fun <U : Any> bind(other: Property<U>, converter: IsomorphicConverter<T, U>): Binding<T> {
+        checkSelfBinding(other)
+        this.value = converter.convertBack(other.value)
         return BidirectionalConverterBinding(this, other, converter)
     }
 
-    private fun <U : Any> doBind(observable: ObservableValue<U>, converter: Converter<U, T>) {
-        val subscription = observable.onChange { changeEvent ->
-            updateCurrentValue(converter.convert(changeEvent.newValue))
+    private fun checkSelfBinding(other: ObservableValue<Any>) {
+        require(this !== other) {
+            "Can't bind a property to itself."
         }
-        updateCurrentValue(converter.convert(observable.value))
-        this.bindingSubscription = Maybe.of(subscription)
     }
 
     private fun updateCurrentValue(value: T) {

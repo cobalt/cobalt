@@ -4,7 +4,7 @@ package org.hexworks.cobalt.databinding.api.expression
 
 import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
-import org.hexworks.cobalt.databinding.internal.binding.ComputedBiBinding
+import org.hexworks.cobalt.databinding.internal.binding.ComputedDualBinding
 import org.hexworks.cobalt.databinding.internal.binding.ComputedSingleBinding
 
 fun ObservableValue<Double>.negate(): Binding<Double> {
@@ -12,7 +12,7 @@ fun ObservableValue<Double>.negate(): Binding<Double> {
 }
 
 fun ObservableValue<Double>.add(other: ObservableValue<Number>): Binding<Double> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue + otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue + otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.add(other: Double): Binding<Double> {
@@ -32,7 +32,7 @@ fun ObservableValue<Double>.add(other: Long): Binding<Double> {
 }
 
 fun ObservableValue<Double>.subtract(other: ObservableValue<Number>): Binding<Double> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue - otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue - otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.subtract(other: Double): Binding<Double> {
@@ -52,7 +52,7 @@ fun ObservableValue<Double>.subtract(other: Int): Binding<Double> {
 }
 
 fun ObservableValue<Double>.multiply(other: ObservableValue<Number>): Binding<Double> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue * otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue * otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.multiply(other: Double): Binding<Double> {
@@ -72,7 +72,7 @@ fun ObservableValue<Double>.multiply(other: Int): Binding<Double> {
 }
 
 fun ObservableValue<Double>.divide(other: ObservableValue<Number>): Binding<Double> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue / otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue / otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.divide(other: Double): Binding<Double> {
@@ -92,7 +92,7 @@ fun ObservableValue<Double>.divide(other: Int): Binding<Double> {
 }
 
 fun ObservableValue<Double>.isEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue == otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue == otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.isEqualTo(other: Long): Binding<Boolean> {
@@ -112,7 +112,7 @@ fun ObservableValue<Double>.isEqualTo(other: Double): Binding<Boolean> {
 }
 
 fun ObservableValue<Double>.isNotEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue != otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue != otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.isNotEqualTo(other: Long): Binding<Boolean> {
@@ -132,7 +132,7 @@ fun ObservableValue<Double>.isNotEqualTo(other: Int): Binding<Boolean> {
 }
 
 fun ObservableValue<Double>.greaterThan(other: ObservableValue<Number>): Binding<Boolean> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue > otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue > otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.greaterThan(other: Double): Binding<Boolean> {
@@ -152,7 +152,7 @@ fun ObservableValue<Double>.greaterThan(other: Int): Binding<Boolean> {
 }
 
 fun ObservableValue<Double>.lessThan(other: ObservableValue<Number>): Binding<Boolean> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue < otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue < otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.lessThan(other: Double): Binding<Boolean> {
@@ -172,7 +172,7 @@ fun ObservableValue<Double>.lessThan(other: Int): Binding<Boolean> {
 }
 
 fun ObservableValue<Double>.greaterThanOrEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue >= otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue >= otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.greaterThanOrEqualTo(other: Double): Binding<Boolean> {
@@ -192,7 +192,7 @@ fun ObservableValue<Double>.greaterThanOrEqualTo(other: Int): Binding<Boolean> {
 }
 
 fun ObservableValue<Double>.lessThanOrEqualTo(other: ObservableValue<Number>): Binding<Boolean> {
-    return ComputedBiBinding(this, other) { thisValue, otherValue -> thisValue <= otherValue.toDouble() }
+    return ComputedDualBinding(this, other) { thisValue, otherValue -> thisValue <= otherValue.toDouble() }
 }
 
 fun ObservableValue<Double>.lessThanOrEqualTo(other: Double): Binding<Boolean> {
