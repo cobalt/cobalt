@@ -1,10 +1,12 @@
 package org.hexworks.cobalt.databinding.internal.binding
 
 import org.hexworks.cobalt.databinding.api.binding.Binding
+import org.hexworks.cobalt.databinding.api.converter.IsomorphicConverter
 import org.hexworks.cobalt.databinding.api.data.DisposedByException
-import org.hexworks.cobalt.databinding.api.extensions.bindBidirectional
 import org.hexworks.cobalt.databinding.internal.property.DefaultProperty
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @Suppress("TestFunctionName", "FunctionName")
 class BidirectionalConverterBindingTest {
@@ -61,10 +63,12 @@ class BidirectionalConverterBindingTest {
     }
 
     private fun bindTargetToOther(otherProperty: DefaultProperty<Int>): Binding<String> {
-       return target.bindBidirectional(otherProperty, sourceConverter = {
-            it.toInt()
-        }, targetConverter = {
-            it.toString()
+        return target.bind(otherProperty, object : IsomorphicConverter<String, Int> {
+
+            override fun convertBack(target: Int) = target.toString()
+
+            override fun convert(source: String) = source.toInt()
+
         })
     }
 

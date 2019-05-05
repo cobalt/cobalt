@@ -12,6 +12,11 @@ import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribe
 
+/**
+ * A [ComputedDualBinding] creates a [Binding] using **two** [ObservableValue]s which will get
+ * updated whenever any of those values get updated using [computerFn] to compute the new value
+ * of this [Binding].
+ */
 class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0: ObservableValue<T>,
                                                              private val value1: ObservableValue<U>,
                                                              private val computerFn: (T, U) -> V) : Binding<V> {
@@ -21,7 +26,7 @@ class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0:
     override val value: V
         get() {
             require(disposed.not()) {
-                "Can't calculate the value of a Binding which is disposed"
+                "Can't calculate the value of a Binding which is disposed."
             }
             return currentValue
         }
@@ -49,10 +54,6 @@ class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0:
         return Cobalt.eventbus.subscribe<ChangeEvent<V>>(scope) {
             fn(it)
         }
-    }
-
-    override fun onDispose(fn: (Binding<V>, DisposeState) -> Unit) {
-        TODO("not implemented")
     }
 
     private fun doCalculate(): V {

@@ -30,7 +30,5 @@ interface Binding<out T : Any> : ObservableValue<T> {
      */
     fun dispose(disposeState: DisposeState = DisposedByHand)
 
-    fun onDispose(fn: (Binding<T>, DisposeState) -> Unit)
-
     companion object
 }

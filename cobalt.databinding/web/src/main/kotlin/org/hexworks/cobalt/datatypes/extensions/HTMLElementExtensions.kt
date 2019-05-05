@@ -1,6 +1,5 @@
 package org.hexworks.cobalt.datatypes.extensions
 
-import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.w3c.dom.HTMLInputElement

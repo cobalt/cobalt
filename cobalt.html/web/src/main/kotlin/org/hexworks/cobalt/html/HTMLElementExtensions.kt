@@ -2,8 +2,6 @@ package org.hexworks.cobalt.html
 
 import org.hexworks.cobalt.datatypes.Maybe
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLFormElement
-import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 
 fun HTMLElement.addClickListener(listener: (MouseEvent) -> Unit) {

@@ -1,10 +1,11 @@
 package org.hexworks.cobalt.databinding.internal.property
 
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
-import org.hexworks.cobalt.databinding.api.extensions.bind
-import org.hexworks.cobalt.databinding.api.extensions.onChange
 import org.hexworks.cobalt.datatypes.Maybe
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @Suppress("FunctionName", "TestFunctionName")
 class DefaultPropertyTest {
@@ -67,17 +68,6 @@ class DefaultPropertyTest {
     }
 
     @Test
-    fun Should_not_allow_setting_the_value_of_a_bound_property() {
-        val otherProperty = DefaultProperty(QUX)
-
-        target.bind(otherProperty)
-
-        assertFailsWith<IllegalArgumentException> {
-            target.value = BAZ
-        }
-    }
-
-    @Test
     fun When_creating_a_circular_binding_it_should_not_lead_to_stack_overflow() {
         val otherProperty0 = DefaultProperty(QUX)
         val otherProperty1 = DefaultProperty(BAZ)
@@ -95,7 +85,7 @@ class DefaultPropertyTest {
     fun When_binding_bidirectionally_to_another_property_target_value_should_be_updated() {
         val otherProperty0 = DefaultProperty(QUX)
 
-        target.bindBidirectional(otherProperty0)
+        target.bind(otherProperty0)
 
         assertEquals(expected = QUX, actual = target.value)
 
@@ -105,7 +95,7 @@ class DefaultPropertyTest {
     fun When_binding_bidirectionally_and_target_value_changes_other_should_be_updated() {
         val otherProperty = DefaultProperty(QUX)
 
-        target.bindBidirectional(otherProperty)
+        target.bind(otherProperty)
 
         target.value = BAZ
 
@@ -117,7 +107,7 @@ class DefaultPropertyTest {
     fun When_binding_bidirectionally_and_other_value_changes_target_should_be_updated() {
         val otherProperty = DefaultProperty(QUX)
 
-        target.bindBidirectional(otherProperty)
+        target.bind(otherProperty)
 
         otherProperty.value = BAZ
 
@@ -128,7 +118,7 @@ class DefaultPropertyTest {
     fun When_binding_bidirectionally_binding_should_have_same_value_as_target() {
         val otherProperty = DefaultProperty(QUX)
 
-        val binding = target.bindBidirectional(otherProperty)
+        val binding = target.bind(otherProperty)
 
         otherProperty.value = BAZ
 
@@ -139,7 +129,7 @@ class DefaultPropertyTest {
     fun When_binding_is_disposed_target_should_not_update_when_other_changes() {
         val otherProperty = DefaultProperty(QUX)
 
-        target.bindBidirectional(otherProperty).dispose()
+        target.bind(otherProperty).dispose()
 
         otherProperty.value = BAZ
 
@@ -150,7 +140,7 @@ class DefaultPropertyTest {
     fun When_binding_is_disposed_other_should_not_update_when_target_changes() {
         val otherProperty = DefaultProperty(QUX)
 
-        target.bindBidirectional(otherProperty).dispose()
+        target.bind(otherProperty).dispose()
 
         target.value = BAZ
 
@@ -161,7 +151,7 @@ class DefaultPropertyTest {
     fun When_bound_with_converter_target_value_should_be_updated() {
         val otherProperty = DefaultProperty(1)
 
-        target.bind(otherProperty) {
+        target.updateFrom(otherProperty) {
             otherProperty.value.toString()
         }
 
@@ -173,7 +163,7 @@ class DefaultPropertyTest {
     fun When_bound_with_converter_and_other_changes_target_should_be_updated() {
         val otherProperty = DefaultProperty(1)
 
-        target.bind(otherProperty) {
+        target.updateFrom(otherProperty) {
             otherProperty.value.toString()
         }
 

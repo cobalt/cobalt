@@ -13,8 +13,8 @@ kotlin {
             kotlin.srcDirs = ["common/src/main/kotlin"]
             resources.srcDirs = ["common/src/main/resources"]
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation 'org.jetbrains.kotlin:kotlin-reflect'
+                implementation "org.jetbrains.kotlin:kotlin-stdlib"
+                implementation "org.jetbrains.kotlin:kotlin-reflect"
                 api project(":cobalt.datatypes")
             }
         }
@@ -22,8 +22,8 @@ kotlin {
             kotlin.srcDirs = ["common/src/test/kotlin"]
             resources.srcDirs = ["common/src/test/resources"]
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                implementation "org.jetbrains.kotlin:kotlin-test-common"
+                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common"
             }
         }
         webMain {
@@ -37,7 +37,7 @@ kotlin {
             kotlin.srcDirs = ["web/src/test/kotlin"]
             resources.srcDirs = ["web/src/test/resources"]
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test-js'
+                implementation "org.jetbrains.kotlin:kotlin-test-js"
                 dependsOn webMain
             }
         }

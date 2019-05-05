@@ -1,14 +1,14 @@
 kotlin {
     targets {
-        fromPreset(presets.jvm, 'jvm')
-        fromPreset(presets.js, 'web')
+        fromPreset(presets.jvm, "jvm")
+        fromPreset(presets.js, "web")
 
         configure([jvm]) {
             tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
-                jvmTarget = '1.8'
+                jvmTarget = "1.8"
             }
             tasks.getByName(compilations.test.compileKotlinTaskName).kotlinOptions {
-                jvmTarget = '1.8'
+                jvmTarget = "1.8"
             }
         }
 
@@ -24,7 +24,7 @@ kotlin {
             kotlin.srcDirs = ["common/src/main/kotlin"]
             resources.srcDirs = ["common/src/main/resources"]
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                implementation "org.jetbrains.kotlin:kotlin-stdlib"
                 api project(":cobalt.datatypes")
             }
         }
@@ -32,8 +32,8 @@ kotlin {
             kotlin.srcDirs = ["common/src/test/kotlin"]
             resources.srcDirs = ["common/src/test/resources"]
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                implementation "org.jetbrains.kotlin:kotlin-test-common"
+                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common"
                 dependsOn commonMain
             }
         }
@@ -41,7 +41,7 @@ kotlin {
         jvmMain {
             kotlin.srcDirs = ["jvm/src/main/kotlin"]
             dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+                api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
                 api project(":cobalt.datatypes")
                 implementation "org.slf4j:slf4j-api:1.7.25"
             }
@@ -50,8 +50,8 @@ kotlin {
         jvmTest {
             kotlin.srcDirs = ["jvm/src/test/kotlin"]
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                implementation "org.jetbrains.kotlin:kotlin-test"
+                implementation "org.jetbrains.kotlin:kotlin-test-junit"
                 dependsOn jvmMain
             }
         }
@@ -59,14 +59,14 @@ kotlin {
         webMain {
             kotlin.srcDirs = ["web/src/main/kotlin"]
             dependencies {
-                api group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-js', version: coroutines_version
+                api group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core-js", version: coroutines_version
             }
         }
 		
         webTest {
             kotlin.srcDirs = ["web/src/test/kotlin"]
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test-js'
+                implementation "org.jetbrains.kotlin:kotlin-test-js"
                 dependsOn webMain
             }
         }

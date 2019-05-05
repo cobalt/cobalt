@@ -2,7 +2,6 @@ enableFeaturePreview('GRADLE_METADATA')
 
 rootProject.name = "cobalt"
 
-include ":cobalt.utils"
 include ":cobalt.databinding"
 include ":cobalt.logging"
 include ":cobalt.datatypes"

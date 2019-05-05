@@ -12,6 +12,11 @@ import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribe
 
+/**
+ * A [ComputedSingleBinding] creates a [Binding] using **one** [ObservableValue] which will get
+ * updated whenever the [ObservableValue] gets updated using [computerFn] to compute the new value
+ * of this [Binding].
+ */
 class ComputedSingleBinding<out T : Any, V : Any>(private val value0: ObservableValue<T>,
                                                   private val computerFn: (T) -> V) : Binding<V> {
 
@@ -43,9 +48,9 @@ class ComputedSingleBinding<out T : Any, V : Any>(private val value0: Observable
         listeners.clearSubscriptions()
     }
 
-    override fun onChange(listener: ChangeListener<V>): Subscription {
+    override fun onChange(fn: (ChangeEvent<V>) -> Unit): Subscription {
         return Cobalt.eventbus.subscribe<ChangeEvent<V>>(scope) {
-            listener.onChange(it)
+            fn(it)
         }
     }
 
