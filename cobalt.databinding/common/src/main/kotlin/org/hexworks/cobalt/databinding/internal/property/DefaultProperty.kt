@@ -63,10 +63,9 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
     private fun updateCurrentValue(value: T) {
         // this trick enables the whole system not to crash if there is a circular dependency
         if (currentValue != value) {
-            val oldValue = currentValue
             currentValue = value
             Cobalt.eventbus.publish(
-                    event = ChangeEvent(this, oldValue, currentValue),
+                    event = ChangeEvent(this),
                     eventScope = scope)
         }
     }
