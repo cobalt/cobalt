@@ -1,75 +1,61 @@
 kotlin {
-    targets {
-        fromPreset(presets.jvm, "jvm")
-        fromPreset(presets.js, "web")
 
-        configure([jvm]) {
-            tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
-                jvmTarget = "1.8"
-            }
-            tasks.getByName(compilations.test.compileKotlinTaskName).kotlinOptions {
-                jvmTarget = "1.8"
-            }
+    jvm {
+        compilations.main.kotlinOptions {
+            jvmTarget = "1.8"
         }
-
-        configure([web]) {
-            tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
-                sourceMap = true
-            }
+        compilations.test.kotlinOptions {
+            jvmTarget = "1.8"
         }
     }
 
+    js {
+        compilations.main.kotlinOptions {
+            sourceMap = true
+        }
+    }
+
+    //noinspection GroovyAssignabilityCheck,GroovyAccessibility
     sourceSets {
+        
         commonMain {
-            kotlin.srcDirs = ["common/src/main/kotlin"]
-            resources.srcDirs = ["common/src/main/resources"]
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib"
-                implementation "org.jetbrains.kotlin:kotlin-reflect"
-                api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+                api "org.jetbrains.kotlin:kotlin-stdlib"
+                api "org.jetbrains.kotlin:kotlin-reflect"
+                api "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
                 api project(":cobalt.datatypes")
                 api project(":cobalt.logging")
             }
         }
+        
         commonTest {
-            kotlin.srcDirs = ["common/src/test/kotlin"]
-            resources.srcDirs = ["common/src/test/resources"]
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-test-common"
                 implementation "org.jetbrains.kotlin:kotlin-test-annotations-common"
             }
         }
+
         jvmMain {
-            kotlin.srcDirs = ["jvm/src/main/kotlin"]
-            resources.srcDirs = ["jvm/src/main/resources"]
             dependencies {
                 api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-                api project(":cobalt.datatypes")
             }
         }
+
         jvmTest {
-            kotlin.srcDirs = ["jvm/src/test/kotlin"]
-            resources.srcDirs = ["jvm/src/test/resources"]
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test"
-                implementation "org.jetbrains.kotlin:kotlin-test-junit"
-                dependsOn jvmMain
+                //noinspection GroovyAssignabilityCheck
+                implementation kotlin('test-junit')
+
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.mockito:mockito-junit-jupiter:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
             }
         }
-        webMain {
-            kotlin.srcDirs = ["web/src/main/kotlin"]
-            resources.srcDirs = ["web/src/main/resources"]
+
+        jsMain {
             dependencies {
+                api "org.jetbrains.kotlin:kotlin-stdlib-js"
                 api "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutines_version"
-                api project(":cobalt.datatypes")
-            }
-        }
-        webTest {
-            kotlin.srcDirs = ["web/src/test/kotlin"]
-            resources.srcDirs = ["web/src/test/resources"]
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-js"
-                dependsOn webMain
             }
         }
     }
