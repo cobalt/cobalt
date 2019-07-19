@@ -1,6 +1,5 @@
 package org.hexworks.cobalt.logging.internal
 
-import org.hexworks.cobalt.sam.Supplier
 import org.hexworks.cobalt.logging.api.Logger
 
 
@@ -22,9 +21,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         logger.trace(msg)
     }
 
-    override fun trace(msgFn: Supplier<String>) {
+    override fun trace(msgFn: () -> String) {
         if(isTraceEnabled()) {
-            logger.trace(msgFn.get())
+            logger.trace(msgFn())
         }
     }
 
@@ -34,9 +33,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun trace(msgFn: Supplier<String>, t: Throwable) {
+    override fun trace(msgFn: () -> String, t: Throwable) {
         if(isTraceEnabled()) {
-            logger.trace(msgFn.get(), t)
+            logger.trace(msgFn(), t)
         }
     }
 
@@ -46,9 +45,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun debug(msgFn: Supplier<String>) {
+    override fun debug(msgFn: () -> String) {
         if(isDebugEnabled()) {
-            logger.debug(msgFn.get())
+            logger.debug(msgFn())
         }
     }
 
@@ -58,9 +57,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun debug(msgFn: Supplier<String>, t: Throwable) {
+    override fun debug(msgFn: () -> String, t: Throwable) {
         if(isDebugEnabled()) {
-            logger.debug(msgFn.get(), t)
+            logger.debug(msgFn(), t)
         }
     }
 
@@ -70,9 +69,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun info(msgFn: Supplier<String>) {
+    override fun info(msgFn: () -> String) {
         if(isInfoEnabled()) {
-            logger.info(msgFn.get())
+            logger.info(msgFn())
         }
     }
 
@@ -82,9 +81,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun info(msgFn: Supplier<String>, t: Throwable) {
+    override fun info(msgFn: () -> String, t: Throwable) {
         if(isInfoEnabled()) {
-            logger.info(msgFn.get(), t)
+            logger.info(msgFn(), t)
         }
     }
 
@@ -94,9 +93,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun warn(msgFn: Supplier<String>) {
+    override fun warn(msgFn: () -> String) {
         if(isWarnEnabled()) {
-            logger.warn(msgFn.get())
+            logger.warn(msgFn())
         }
     }
 
@@ -106,9 +105,9 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun warn(msgFn: Supplier<String>, t: Throwable) {
+    override fun warn(msgFn: () -> String, t: Throwable) {
         if(isWarnEnabled()) {
-            logger.warn(msgFn.get(), t)
+            logger.warn(msgFn(), t)
         }
     }
 
@@ -118,21 +117,21 @@ class SLF4JLoggerWrapper(private val logger: org.slf4j.Logger) : Logger {
         }
     }
 
-    override fun error(msgFn: Supplier<String>) {
+    override fun error(msgFn: () -> String) {
         if(isErrorEnabled()) {
-            logger.error(msgFn.get())
+            logger.error(msgFn())
         }
     }
 
     override fun error(msg: String, t: Throwable) {
         if(isErrorEnabled()) {
-            logger.error(msg)
+            logger.error(msg, t)
         }
     }
 
-    override fun error(msgFn: Supplier<String>, t: Throwable) {
+    override fun error(msgFn: () -> String, t: Throwable) {
         if(isErrorEnabled()) {
-            logger.error(msgFn.get(), t)
+            logger.error(msgFn(), t)
         }
     }
 

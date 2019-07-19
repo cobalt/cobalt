@@ -1,6 +1,5 @@
 package org.hexworks.cobalt.logging.internal
 
-import org.hexworks.cobalt.sam.Supplier
 import org.hexworks.cobalt.logging.api.Logger
 import org.hexworks.cobalt.logging.api.LoggingLevel
 import org.hexworks.cobalt.logging.api.LoggingLevel.*
@@ -21,7 +20,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(TRACE, msg)
     }
 
-    override fun trace(msgFn: Supplier<String>) {
+    override fun trace(msgFn: () -> String) {
         log(TRACE, msgFn)
     }
 
@@ -29,7 +28,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(TRACE, msg, t)
     }
 
-    override fun trace(msgFn: Supplier<String>, t: Throwable) {
+    override fun trace(msgFn: () -> String, t: Throwable) {
         log(TRACE, msgFn, t)
     }
 
@@ -37,7 +36,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(DEBUG, msg)
     }
 
-    override fun debug(msgFn: Supplier<String>) {
+    override fun debug(msgFn: () -> String) {
         log(DEBUG, msgFn)
     }
 
@@ -45,7 +44,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(DEBUG, msg, t)
     }
 
-    override fun debug(msgFn: Supplier<String>, t: Throwable) {
+    override fun debug(msgFn: () -> String, t: Throwable) {
         log(DEBUG, msgFn, t)
     }
 
@@ -53,7 +52,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(INFO, msg)
     }
 
-    override fun info(msgFn: Supplier<String>) {
+    override fun info(msgFn: () -> String) {
         log(INFO, msgFn)
     }
 
@@ -61,7 +60,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(INFO, msg, t)
     }
 
-    override fun info(msgFn: Supplier<String>, t: Throwable) {
+    override fun info(msgFn: () -> String, t: Throwable) {
         log(INFO, msgFn, t)
     }
 
@@ -69,7 +68,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(WARN, msg)
     }
 
-    override fun warn(msgFn: Supplier<String>) {
+    override fun warn(msgFn: () -> String) {
         log(WARN, msgFn)
     }
 
@@ -77,7 +76,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(WARN, msg, t)
     }
 
-    override fun warn(msgFn: Supplier<String>, t: Throwable) {
+    override fun warn(msgFn: () -> String, t: Throwable) {
         log(WARN, msgFn, t)
     }
 
@@ -85,7 +84,7 @@ class DefaultLogger(override val name: String) : Logger {
         log(ERROR, msg)
     }
 
-    override fun error(msgFn: Supplier<String>) {
+    override fun error(msgFn: () -> String) {
         log(ERROR, msgFn)
     }
 
@@ -93,13 +92,13 @@ class DefaultLogger(override val name: String) : Logger {
         log(ERROR, msg, t)
     }
 
-    override fun error(msgFn: Supplier<String>, t: Throwable) {
+    override fun error(msgFn: () -> String, t: Throwable) {
         log(ERROR, msgFn, t)
     }
 
-    private fun log(loggingLevel: LoggingLevel, msgFn: Supplier<String>, t: Throwable = NO_THROWABLE) {
+    private fun log(loggingLevel: LoggingLevel, msgFn: () -> String, t: Throwable = NO_THROWABLE) {
         if (loggingLevel.isEnabled) {
-            console.log("${loggingLevel.name}: [$name] ${msgFn.get()} ${t.throwableToString()}")
+            console.log("${loggingLevel.name}: [$name] ${msgFn()} ${t.throwableToString()}")
         }
     }
 

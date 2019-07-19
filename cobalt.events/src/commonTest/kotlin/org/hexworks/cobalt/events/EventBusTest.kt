@@ -36,7 +36,7 @@ class EventBusTest {
         val subscription0 = target.subscribe<TestEvent> {
             sub0Notified = true
         }
-        val subscription1 = target.subscribe<TestEvent> {
+        target.subscribe<TestEvent> {
             sub1Notified = true
         }
 

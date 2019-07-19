@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package org.hexworks.cobalt.databinding.internal.collections
 
 import org.hexworks.cobalt.databinding.api.Cobalt

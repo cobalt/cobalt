@@ -1,4 +1,4 @@
-package org.hexworks.cobalt.datatypes
+package org.hexworks.cobalt
 
 import org.hexworks.cobalt.factory.IdentifierFactory
 

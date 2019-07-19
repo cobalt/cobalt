@@ -1,45 +1,15 @@
-package org.hexworks.cobalt.datatypes
+package org.hexworks.cobalt
 
-// TODO: fix lambda
-interface Predicate<T> {
+typealias Predicate<T> = Function1<T, Boolean>
 
-    fun test(t: T): Boolean
+fun <T> Predicate<T>.and(other: Predicate<in T>): Predicate<T> = {
+    this(it) && other(it)
+}
 
-    fun and(other: Predicate<in T>): Predicate<T> {
-        val outer = this
-        return object : Predicate<T> {
-            override fun test(t: T): Boolean {
-                return outer.test(t) && other.test(t)
-            }
-        }
-    }
+fun <T> Predicate<T>.negate(): Predicate<T> = {
+    !this(it)
+}
 
-    fun negate(): Predicate<T> {
-        val outer = this
-        return object : Predicate<T> {
-            override fun test(t: T): Boolean {
-                return !outer.test(t)
-            }
-        }
-    }
-
-    fun or(other: Predicate<in T>): Predicate<T> {
-        val outer = this
-        return object : Predicate<T> {
-            override fun test(t: T): Boolean {
-                return outer.test(t) || other.test(t)
-            }
-        }
-    }
-
-    companion object {
-
-        fun <T> isEqual(targetRef: Any): Predicate<T?> {
-            return object : Predicate<T?> {
-                override fun test(t: T?): Boolean {
-                    return targetRef == t
-                }
-            }
-        }
-    }
+fun <T> Predicate<T>.or(other: Predicate<in T>): Predicate<T> = {
+    this(it) || other(it)
 }

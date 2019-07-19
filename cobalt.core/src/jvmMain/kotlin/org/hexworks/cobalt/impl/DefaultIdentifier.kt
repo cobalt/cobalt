@@ -1,6 +1,6 @@
 package org.hexworks.cobalt.impl
 
-import org.hexworks.cobalt.datatypes.Identifier
+import org.hexworks.cobalt.Identifier
 import java.util.*
 
 class DefaultIdentifier(private val backend: UUID = UUID.randomUUID()) : Identifier {

@@ -1,6 +1,6 @@
 package org.hexworks.cobalt.factory
 
-import org.hexworks.cobalt.datatypes.Identifier
+import org.hexworks.cobalt.Identifier
 
 expect object IdentifierFactory {
 

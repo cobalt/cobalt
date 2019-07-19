@@ -2,7 +2,6 @@ package org.hexworks.cobalt.events.internal
 
 import org.hexworks.cobalt.events.api.*
 import org.hexworks.cobalt.logging.api.LoggerFactory
-import org.hexworks.cobalt.logging.api.debug
 
 class DefaultEventBus : EventBus {
 

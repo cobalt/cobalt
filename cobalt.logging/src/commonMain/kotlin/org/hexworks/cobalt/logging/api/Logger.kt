@@ -1,7 +1,5 @@
 package org.hexworks.cobalt.logging.api
 
-import org.hexworks.cobalt.sam.Supplier
-
 /**
  * The [Logger] interface contains all possible logging operations.
  */
@@ -45,7 +43,7 @@ interface Logger {
     /**
      * Lazily log a message at the TRACE level.
      */
-    fun trace(msgFn: Supplier<String>)
+    fun trace(msgFn: () -> String)
 
     /**
      * Log an exception (throwable) at the TRACE level with an
@@ -57,7 +55,7 @@ interface Logger {
      * Lazily log an exception (throwable) at the TRACE level with an
      * accompanying message.
      */
-    fun trace(msgFn: Supplier<String>, t: Throwable)
+    fun trace(msgFn: () -> String, t: Throwable)
 
     /**
      * Log a message at the DEBUG level.
@@ -67,7 +65,7 @@ interface Logger {
     /**
      * Lazily log a message at the DEBUG level.
      */
-    fun debug(msgFn: Supplier<String>)
+    fun debug(msgFn: () -> String)
 
     /**
      * Log an exception (throwable) at the DEBUG level with an
@@ -79,7 +77,7 @@ interface Logger {
      * Lazily log an exception (throwable) at the DEBUG level with an
      * accompanying message.
      */
-    fun debug(msgFn: Supplier<String>, t: Throwable)
+    fun debug(msgFn: () -> String, t: Throwable)
 
 
     /**
@@ -90,7 +88,7 @@ interface Logger {
     /**
      * Lazily log a message at the INFO level.
      */
-    fun info(msgFn: Supplier<String>)
+    fun info(msgFn: () -> String)
 
     /**
      * Log an exception (throwable) at the INFO level with an
@@ -102,7 +100,7 @@ interface Logger {
      * Lazily log an exception (throwable) at the INFO level with an
      * accompanying message.
      */
-    fun info(msgFn: Supplier<String>, t: Throwable)
+    fun info(msgFn: () -> String, t: Throwable)
 
     /**
      * Log a message at the WARN level.
@@ -112,7 +110,7 @@ interface Logger {
     /**
      * Lazily log a message at the WARN level.
      */
-    fun warn(msgFn: Supplier<String>)
+    fun warn(msgFn: () -> String)
 
     /**
      * Log an exception (throwable) at the WARN level with an
@@ -124,7 +122,7 @@ interface Logger {
      * Lazily log an exception (throwable) at the WARN level with an
      * accompanying message.
      */
-    fun warn(msgFn: Supplier<String>, t: Throwable)
+    fun warn(msgFn: () -> String, t: Throwable)
 
     /**
      * Log a message at the ERROR level.
@@ -134,7 +132,7 @@ interface Logger {
     /**
      * Lazily log a message at the ERROR level.
      */
-    fun error(msgFn: Supplier<String>)
+    fun error(msgFn: () -> String)
 
     /**
      * Log an exception (throwable) at the ERROR level with an
@@ -146,6 +144,6 @@ interface Logger {
      * Lazily log an exception (throwable) at the ERROR level with an
      * accompanying message.
      */
-    fun error(msgFn: Supplier<String>, t: Throwable)
+    fun error(msgFn: () -> String, t: Throwable)
 
 }

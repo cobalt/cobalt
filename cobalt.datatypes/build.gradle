@@ -1,5 +1,4 @@
 kotlin {
-
     jvm {
         compilations.main.kotlinOptions {
             jvmTarget = "1.8"
@@ -7,6 +6,7 @@ kotlin {
         compilations.test.kotlinOptions {
             jvmTarget = "1.8"
         }
+        withJava()
     }
 
     js {
@@ -15,6 +15,7 @@ kotlin {
         }
     }
 
+    //noinspection GroovyAccessibility,GroovyAssignabilityCheck
     sourceSets {
         commonMain {
             dependencies {
@@ -33,6 +34,17 @@ kotlin {
         jvmMain {
             dependencies {
                 api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                //noinspection GroovyAssignabilityCheck
+                implementation kotlin('test-junit')
+
+                implementation "org.mockito:mockito-core:$mockito_version"
+                implementation "org.mockito:mockito-junit-jupiter:$mockito_version"
+                implementation "org.assertj:assertj-core:$assertj_version"
             }
         }
 
