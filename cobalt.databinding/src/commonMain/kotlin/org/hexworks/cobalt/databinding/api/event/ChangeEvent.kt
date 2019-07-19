@@ -7,4 +7,6 @@ import org.hexworks.cobalt.events.api.Event
  * Fired when an [ObservableValue] changes.
  * **Note that** if no **change** happens no [ChangeEvent] is fired.
  */
-data class ChangeEvent<out T : Any>(val observableValue: ObservableValue<T>) : Event
+data class ChangeEvent<out T : Any>(val observableValue: ObservableValue<T>,
+                                    val oldValue: T,
+                                    val newValue: T) : Event

@@ -62,7 +62,10 @@ class ComputedSingleBinding<out T : Any, V : Any>(private val value0: Observable
                 oldValue
             } else {
                 this.currentValue = newValue
-                val event = ChangeEvent(this)
+                val event = ChangeEvent(
+                        observableValue = this,
+                        oldValue = oldValue,
+                        newValue = newValue)
                 Cobalt.eventbus.publish(event, scope)
                 newValue
             }

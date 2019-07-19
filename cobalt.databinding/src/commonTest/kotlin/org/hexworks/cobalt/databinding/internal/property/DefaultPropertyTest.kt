@@ -20,7 +20,10 @@ class DefaultPropertyTest {
     @Test
     fun When_target_property_value_changes_the_change_listener_should_be_notified_with_the_proper_event() {
         var change = Maybe.empty<ChangeEvent<String>>()
-        val expectedChange = ChangeEvent(target)
+        val expectedChange = ChangeEvent(
+                observableValue = target,
+                oldValue = XUL,
+                newValue = QUX)
 
         target.onChange {
             change = Maybe.of(it)

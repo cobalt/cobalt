@@ -64,7 +64,10 @@ class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0:
                 oldValue
             } else {
                 this.currentValue = newValue
-                val event = ChangeEvent(this)
+                val event = ChangeEvent(
+                        observableValue = this,
+                        oldValue = oldValue,
+                        newValue = newValue)
                 Cobalt.eventbus.publish(event, scope)
                 newValue
             }
