@@ -1,3 +1,6 @@
+group = "org.hexworks.cobalt"
+version = "2019.1.2-PREVIEW"
+
 buildscript {
     repositories {
         mavenCentral()
