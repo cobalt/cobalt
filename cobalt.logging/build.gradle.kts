@@ -2,6 +2,8 @@ plugins {
     kotlinMultiplatform
 }
 
+group = "org.hexworks.cobalt"
+
 kotlin {
 
     jvm {
