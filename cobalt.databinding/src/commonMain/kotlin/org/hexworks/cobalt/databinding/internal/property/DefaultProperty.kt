@@ -6,14 +6,16 @@ import org.hexworks.cobalt.databinding.api.converter.IsomorphicConverter
 import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
 import org.hexworks.cobalt.databinding.api.property.Property
-import org.hexworks.cobalt.databinding.api.value.ObservableValue
+import org.hexworks.cobalt.databinding.api.value.*
 import org.hexworks.cobalt.databinding.internal.binding.BidirectionalBinding
 import org.hexworks.cobalt.databinding.internal.binding.UnidirectionalBinding
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribe
 
 @Suppress("UNCHECKED_CAST")
-class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
+class DefaultProperty<T : Any>(
+        initialValue: T,
+        private val isValid: (T) -> Boolean = { true }) : Property<T> {
 
     private val scope = ChangeEventScope()
 
@@ -25,6 +27,15 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
         set(value) {
             updateCurrentValue(value)
         }
+
+    override fun updateValue(newValue: T): ValueValidationResult {
+        return try {
+            updateCurrentValue(newValue)
+            ValueValidationSuccessful
+        } catch (e: ValueValidationFailedException) {
+            ValueValidationFailed(e)
+        }
+    }
 
     override fun onChange(fn: (ChangeEvent<T>) -> Unit): Subscription {
         return Cobalt.eventbus.subscribe<ChangeEvent<T>>(scope) {
@@ -61,6 +72,9 @@ class DefaultProperty<T : Any>(initialValue: T) : Property<T> {
     }
 
     private fun updateCurrentValue(value: T) {
+        if (isValid(value).not()) {
+            throw ValueValidationFailedException("The given value '$value' is invalid.")
+        }
         // this trick enables the whole system not to crash if there is a circular dependency
         if (currentValue != value) {
             val ce = ChangeEvent(

@@ -10,6 +10,13 @@ interface WritableValue<T : Any> : Value<T> {
     override var value: T
 
     /**
+     * Tries to update the [value] with the given [newValue].
+     * @return [ValueValidationSuccessful] if [newValue] is
+     * acceptable, [ValueValidationFailed] if not.
+     */
+    fun updateValue(newValue: T): ValueValidationResult
+
+    /**
      * Starts updating this [WritableValue] from the given [observable].
      * @return a [Binding] which can be disposed to stop the updates
      */
