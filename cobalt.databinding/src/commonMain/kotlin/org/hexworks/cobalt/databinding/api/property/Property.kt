@@ -17,16 +17,22 @@ interface Property<T : Any> : WritableValue<T>, ObservableValue<T> {
     /**
      * Creates a bidirectional binding between this [Property] and [other].
      * eg: whenever each one is updated, the other will get updated with
-     * the new value.
+     * the new value. If [updateWhenBound] is `true` then the value of this
+     * [Property] will be updated when the binding takes place. Otherwise it will
+     * only get updated when [other] is updated.
      */
-    infix fun bind(other: Property<T>): Binding<T>
+    fun bind(other: Property<T>, updateWhenBound: Boolean = true): Binding<T>
 
     /**
      * Creates a bidirectional binding between this [Property] and [other].
      * Uses the given [IsomorphicConverter] to convert the values between the
-     * subject properties.
+     * subject properties. If [updateWhenBound] is `true` then the value of this
+     * [WritableValue] will be updated when the binding takes place.
+     * Otherwise it will only get updated when [other] is updated.
      */
-    fun <U : Any> bind(other: Property<U>, converter: IsomorphicConverter<T, U>): Binding<T>
+    fun <U : Any> bind(other: Property<U>,
+                       updateWhenBound: Boolean = true,
+                       converter: IsomorphicConverter<T, U>): Binding<T>
 
     /**
      * Creates a [PropertyDelegate] for this [Property].

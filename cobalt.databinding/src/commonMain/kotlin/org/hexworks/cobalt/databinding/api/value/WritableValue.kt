@@ -17,16 +17,24 @@ interface WritableValue<T : Any> : Value<T> {
     fun updateValue(newValue: T): ValueValidationResult
 
     /**
-     * Starts updating this [WritableValue] from the given [observable].
+     * Starts updating this [WritableValue] from the given [observable]. If [updateWhenBound]
+     * is `true` then the value of this [WritableValue] will be updated when the binding takes place.
+     * Otherwise it will only get updated when [observable] is updated.
      * @return a [Binding] which can be disposed to stop the updates
      */
-    infix fun updateFrom(observable: ObservableValue<T>): Binding<T>
+    fun updateFrom(observable: ObservableValue<T>,
+                   updateWhenBound: Boolean = true): Binding<T>
 
     /**
      * Starts updating this [WritableValue] from the given [observable].
-     * Uses the given [converter] to convert the values
+     * Uses the given [converter] to convert the values. If [updateWhenBound]
+     * is `true` then the value of this [WritableValue] will be updated
+     * when the binding takes place. Otherwise it will only get updated when
+     * [observable] is updated.
      * @return a [Binding] which can be disposed to stop the updates
      */
-    fun <U : Any> updateFrom(observable: ObservableValue<U>, converter: (U) -> T): Binding<T>
+    fun <U : Any> updateFrom(observable: ObservableValue<U>,
+                             updateWhenBound: Boolean = true,
+                             converter: (U) -> T): Binding<T>
 
 }

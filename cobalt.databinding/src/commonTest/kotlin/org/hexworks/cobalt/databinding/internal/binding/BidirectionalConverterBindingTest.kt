@@ -63,7 +63,7 @@ class BidirectionalConverterBindingTest {
     }
 
     private fun bindTargetToOther(otherProperty: DefaultProperty<Int>): Binding<String> {
-        return target.bind(otherProperty, object : IsomorphicConverter<String, Int> {
+        return target.bind(other = otherProperty, converter = object : IsomorphicConverter<String, Int> {
 
             override fun convertBack(target: Int) = target.toString()
 

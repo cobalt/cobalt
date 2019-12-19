@@ -43,26 +43,33 @@ class DefaultProperty<T : Any>(
         }
     }
 
-    override fun updateFrom(observable: ObservableValue<T>): Binding<T> {
-        return updateFrom(observable) { it }
+    override fun bind(other: Property<T>, updateWhenBound: Boolean): Binding<T> {
+        return bind(other, updateWhenBound, identityConverter)
     }
 
-    override fun bind(other: Property<T>): Binding<T> {
-        return bind(other, identityConverter)
+    override fun <U : Any> bind(other: Property<U>,
+                                updateWhenBound: Boolean,
+                                converter: IsomorphicConverter<T, U>): Binding<T> {
+        checkSelfBinding(other)
+        if (updateWhenBound) {
+            updateCurrentValue(converter.convertBack(other.value))
+        }
+        return BidirectionalBinding(this, other, converter)
+    }
+
+    override fun updateFrom(observable: ObservableValue<T>, updateWhenBound: Boolean): Binding<T> {
+        return updateFrom(observable, updateWhenBound) { it }
     }
 
     override fun <U : Any> updateFrom(
             observable: ObservableValue<U>,
+            updateWhenBound: Boolean,
             converter: (U) -> T): Binding<T> {
         checkSelfBinding(observable)
-        updateCurrentValue(converter(observable.value))
+        if (updateWhenBound) {
+            updateCurrentValue(converter(observable.value))
+        }
         return UnidirectionalBinding(observable, this, converter)
-    }
-
-    override fun <U : Any> bind(other: Property<U>, converter: IsomorphicConverter<T, U>): Binding<T> {
-        checkSelfBinding(other)
-        updateCurrentValue(converter.convertBack(other.value))
-        return BidirectionalBinding(this, other, converter)
     }
 
     private fun checkSelfBinding(other: ObservableValue<Any>) {

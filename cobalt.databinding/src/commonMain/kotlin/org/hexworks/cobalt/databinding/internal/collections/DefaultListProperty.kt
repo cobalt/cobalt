@@ -22,6 +22,12 @@ class DefaultListProperty<T : Any>(
         private val backingList: MutableList<T>)
     : ListProperty<T>, MutableList<T> by backingList {
 
+    override fun onChange(fn: (ChangeEvent<List<T>>) -> Unit): Subscription {
+        return Cobalt.eventbus.subscribe<ChangeEvent<ListProperty<T>>>(scope) {
+            fn(it)
+        }
+    }
+
     override var value: ListProperty<T>
         get() = this
         set(value) {
@@ -120,12 +126,6 @@ class DefaultListProperty<T : Any>(
 
     override fun <U : Any> updateFrom(observable: ObservableList<U>, converter: (U) -> T): Binding<ObservableList<T>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onChange(fn: (ChangeEvent<ObservableList<T>>) -> Unit): Subscription {
-        return Cobalt.eventbus.subscribe<ChangeEvent<ListProperty<T>>>(scope) {
-            fn(it)
-        }
     }
 
     private inner class ListBinding<S : Any, T : Any>(
