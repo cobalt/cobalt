@@ -1,6 +1,6 @@
 package org.hexworks.cobalt.datatypes
 
-import org.hexworks.cobalt.Predicate
+import org.hexworks.cobalt.core.extensions.Predicate
 
 
 @Suppress("UNCHECKED_CAST")

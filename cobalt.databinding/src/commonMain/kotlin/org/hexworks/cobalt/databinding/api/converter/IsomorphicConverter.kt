@@ -2,7 +2,7 @@ package org.hexworks.cobalt.databinding.api.converter
 
 /**
  * Responsible for converting a value of type [S] to a value of type [T]
- * and vica versa.
+ * and vice versa.
  */
 interface IsomorphicConverter<S, T> : Converter<S, T> {
 

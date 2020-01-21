@@ -1,9 +1,9 @@
 package org.hexworks.cobalt.databinding.api.data
 
 /**
- * Sealed class holding the possible dispose states.
+ * The possible dispose states.
  */
-sealed class DisposeState(val disposed: Boolean)
+sealed class DisposeState(val isDisposed: Boolean)
 
 object NotDisposed : DisposeState(false)
 

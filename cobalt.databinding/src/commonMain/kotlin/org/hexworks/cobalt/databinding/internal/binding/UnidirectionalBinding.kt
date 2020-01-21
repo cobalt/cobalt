@@ -4,14 +4,15 @@ import org.hexworks.cobalt.databinding.api.Cobalt
 import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.data.DisposeState
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
-import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
+import org.hexworks.cobalt.databinding.api.event.ObservableValueChanged
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.databinding.api.value.WritableValue
 import org.hexworks.cobalt.databinding.internal.extensions.runWithDisposeOnFailure
 import org.hexworks.cobalt.events.api.Subscription
-import org.hexworks.cobalt.events.api.subscribe
+import org.hexworks.cobalt.events.api.subscribeTo
+import org.hexworks.cobalt.logging.api.LoggerFactory
 
 /**
  * Creates a **unidirectional** [Binding] between [source] and [target] which means that
@@ -30,26 +31,32 @@ class UnidirectionalBinding<out S : Any, out T : Any>(
     override var disposeState: DisposeState = NotDisposed
         private set
 
-    private val scope = ChangeEventScope()
+    private val logger = LoggerFactory.getLogger(this::class)
+    private val selfScope = ChangeEventScope()
+
+    override fun toString() = "UnidirectionalBinding(source=$source, target=$target)"
 
     private val listeners: MutableList<Subscription> = mutableListOf(
             source.onChange { changeEvent ->
+                println("Receiving change event: $changeEvent in $this")
                 runWithDisposeOnFailure {
-                    target.value = converter(source.value)
+                    val newValue = converter(changeEvent.newValue)
+                    println("Updating bound $target from ${changeEvent.observableValue} with new value $newValue.")
+                    target.value = newValue
                     Cobalt.eventbus.publish(
                             event = changeEvent,
-                            eventScope = scope)
+                            eventScope = selfScope)
                 }
             })
 
     override fun dispose(disposeState: DisposeState) {
-        Cobalt.eventbus.cancelScope(scope)
+        Cobalt.eventbus.cancelScope(selfScope)
         this.disposeState = disposeState
         listeners.clearSubscriptions()
     }
 
-    override fun onChange(fn: (ChangeEvent<T>) -> Unit): Subscription {
-        return Cobalt.eventbus.subscribe<ChangeEvent<T>>(scope) {
+    override fun onChange(fn: (ObservableValueChanged<T>) -> Unit): Subscription {
+        return Cobalt.eventbus.subscribeTo<ObservableValueChanged<T>>(selfScope) {
             fn(it)
         }
     }

@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@Suppress("TestFunctionName", "FunctionName")
+@Suppress("TestFunctionName")
 class EventBusTest {
 
     private val target = EventBus.create()
@@ -15,16 +15,14 @@ class EventBusTest {
     @Test
     fun When_a_subscription_for_a_scope_and_key_is_cancelled_other_subscriptions_for_the_same_combination_shouldnt_be_cancelled() {
 
-
-        val subscription0 = target.subscribe<TestEvent> {
+        val subscription0 = target.subscribeTo<TestEvent> {
         }
-        val subscription1 = target.subscribe<TestEvent> {
+        val subscription1 = target.subscribeTo<TestEvent> {
         }
 
         subscription0.cancel()
 
         assertFalse(subscription1.cancelled)
-
     }
 
     @Test
@@ -33,10 +31,11 @@ class EventBusTest {
         var sub0Notified = false
         var sub1Notified = false
 
-        val subscription0 = target.subscribe<TestEvent> {
+
+        val subscription0 = target.subscribeTo<TestEvent> {
             sub0Notified = true
         }
-        target.subscribe<TestEvent> {
+        target.subscribeTo<TestEvent> {
             sub1Notified = true
         }
 
@@ -52,7 +51,8 @@ class EventBusTest {
     fun When_subscribed_to_an_event_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
 
         var notified = false
-        target.subscribe<TestEvent> {
+
+        target.subscribeTo<TestEvent> {
             notified = true
         }
 
@@ -65,7 +65,7 @@ class EventBusTest {
     fun When_subscribed_to_an_event_and_scope_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
 
         var notified = false
-        target.subscribe<TestEvent>(TestScope) {
+        target.subscribeTo<TestEvent>(TestScope) {
             notified = true
         }
 
@@ -78,7 +78,7 @@ class EventBusTest {
     fun When_subscribed_to_an_event_and_scope_and_the_proper_event_is_broadcasted_but_with_wrong_scope_then_the_subscriber_should_not_be_notified() {
 
         var notified = false
-        target.subscribe<TestEvent> {
+        target.subscribeTo<TestEvent> {
             notified = true
         }
 
@@ -91,7 +91,8 @@ class EventBusTest {
     fun When_subscribed_to_an_event_with_a_key_and_the_proper_event_is_broadcasted_then_the_subscriber_should_be_notified() {
 
         var notified = false
-        target.subscribe<TestEvent>(key = TestEvent.key) {
+
+        target.subscribeTo<TestEvent>(key = TestEvent.key) {
             notified = true
         }
 
@@ -106,10 +107,10 @@ class EventBusTest {
 
         val notifications = mutableListOf<Int>()
 
-        target.subscribe<TestEvent> {
+        target.subscribeTo<TestEvent> {
             notifications += 0
         }
-        target.subscribe<TestEvent> {
+        target.subscribeTo<TestEvent> {
             notifications += 1
         }
 
@@ -122,11 +123,10 @@ class EventBusTest {
     fun When_EventBus_has_multiple_subscribers_for_the_same_event_but_different_scopes_only_one_should_be_notified_when_that_event_is_fired() {
 
         val notifications = mutableListOf<EventScope>()
-
-        target.subscribe<TestEvent>(TestScope) {
+        target.subscribeTo<TestEvent>(TestScope) {
             notifications.add(TestScope)
         }
-        target.subscribe<TestEvent>(ApplicationScope) {
+        target.subscribeTo<TestEvent>(ApplicationScope) {
             notifications.add(ApplicationScope)
         }
 
@@ -138,40 +138,26 @@ class EventBusTest {
     @Test
     fun When_unsubscribed_from_event_subscriber_should_not_be_present_in_EventBus() {
 
-        target.subscribe<TestEvent> { }.cancel()
+        target.subscribeTo<TestEvent> { }.cancel()
 
-        assertEquals(listOf(), target.subscribersFor(ApplicationScope, TestEvent.key).toList(), "Subscribers should be empty.")
+        assertEquals(expected = listOf(), actual = target.fetchSubscribersOf(ApplicationScope, TestEvent.key).toList(),
+                message = "Subscribers should be empty.")
 
     }
 
+    // TODO: cancelScope!
     @Test
     fun When_invoking_callback_causes_exception_subscriber_should_be_cancelled_with_exception() {
         val exception = IllegalArgumentException()
-
-        val subscription = target.subscribe<TestEvent> {
+        val expectedState = CancelledByException(exception)
+        val subscription = target.subscribeTo<TestEvent> {
             throw exception
         }
-
-        val expectedState = CancelledByException(exception)
 
         target.publish(TestEvent)
 
         assertEquals(expected = expectedState, actual = subscription.cancelState,
                 message = "Subscriber should have been cancelled with exception")
-    }
-
-    @Test
-    fun Test() {
-        val expectedResult = "foo"
-        target.process<TestEvent, String> {
-            expectedResult
-        }
-        var actualResult = ""
-        target.send<TestEvent, String>(TestEvent) { (result) ->
-            actualResult = result
-        }
-
-        assertEquals(expected = expectedResult, actual = actualResult)
     }
 
     object TestEvent : Event

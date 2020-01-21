@@ -1,7 +1,7 @@
 package org.hexworks.cobalt.events.api
 
 /**
- * Represents a subscription to some kind of event.
+ * Represents a subscription to an event.
  */
 interface Subscription {
 

@@ -16,6 +16,10 @@ kotlin {
 
     dependencies {
 
+        with(Libs) {
+            commonMainApi(kotlinxCollectionsImmutable)
+        }
+
         with(Projects) {
             commonMainApi(cobaltCore)
         }

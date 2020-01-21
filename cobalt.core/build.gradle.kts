@@ -18,15 +18,20 @@ kotlin {
 
         with(Libs) {
             commonMainApi(kotlinStdLibCommon)
-            commonMainApi(kotlinxCoroutines)
+            commonMainApi(kotlinxCoroutinesCommon)
             commonMainApi(kotlinReflect)
+
             jvmMainApi(kotlinStdLibJdk8)
+            jvmMainApi(kotlinxCoroutines)
+
             jsMainApi(kotlinStdLibJs)
+            jsMainApi(kotlinxCoroutinesJs)
         }
 
         with(TestLibs) {
             commonTestApi(kotlinTestCommon)
             commonTestApi(kotlinTestAnnotationsCommon)
+            commonTestApi(kotlinxCoroutinesTest)
             jvmTestApi(kotlinTestJunit)
             jsTestApi(kotlinTestJs)
         }

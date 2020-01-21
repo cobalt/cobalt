@@ -1,24 +1,35 @@
 package org.hexworks.cobalt.events.internal
 
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import org.hexworks.cobalt.core.internal.toAtom
 import org.hexworks.cobalt.events.api.*
 import org.hexworks.cobalt.logging.api.LoggerFactory
+import kotlin.coroutines.CoroutineContext
 
-class DefaultEventBus : EventBus {
+class DefaultEventBus(
+        override val coroutineContext: CoroutineContext = Dispatchers.Default + SupervisorJob())
+    : EventBus, CoroutineScope {
 
+    private var closed = false
     private val logger = LoggerFactory.getLogger(this::class)
-    private val subscriptions: ThreadSafeMap<SubscriberKey, ThreadSafeQueue<EventBusSubscription<*, Unit>>> =
-            ThreadSafeMapFactory.create()
+    private var subsRef = persistentMapOf<SubscriberKey, PersistentList<EventBusSubscription<*, Unit>>>().toAtom()
 
-    private val processors: ThreadSafeMap<ProcessorKey, EventBusSubscription<*, *>> =
-            ThreadSafeMapFactory.create()
-
-    override fun subscribersFor(eventScope: EventScope, key: String): Collection<Subscription> {
-        return subscriptions.getOrDefault(SubscriberKey(eventScope, key), ThreadSafeQueueFactory.create())
+    override fun fetchSubscribersOf(eventScope: EventScope, key: String): Iterable<Subscription> {
+        checkClosed()
+        return subsRef.get().getOrElse(SubscriberKey(eventScope, key)) { listOf() }
     }
 
-    override fun <T : Event> subscribe(eventScope: EventScope,
-                                       key: String,
-                                       callback: (T) -> Unit): Subscription {
+    override fun <T : Event> subscribeTo(
+            eventScope: EventScope,
+            key: String,
+            fn: (T) -> Unit
+    ): Subscription {
+        checkClosed()
         return try {
             logger.debug {
                 "Subscribing to '$key' with scope '$eventScope'."
@@ -26,9 +37,13 @@ class DefaultEventBus : EventBus {
             val subscription = EventBusSubscription(
                     eventScope = eventScope,
                     key = key,
-                    callback = callback)
-
-            subscriptions.getOrPut(SubscriberKey(eventScope, key)) { ThreadSafeQueueFactory.create() }.add(subscription)
+                    callback = fn)
+            val subKey = SubscriberKey(eventScope, key)
+            subsRef.transform { subscriptions ->
+                subscriptions.put(subKey, subscriptions
+                        .getOrElse(subKey) { persistentListOf() }
+                        .add(subscription))
+            }
             subscription
         } catch (e: Exception) {
             logger.warn("Failed to add new subscription to subscriptions", e)
@@ -37,13 +52,15 @@ class DefaultEventBus : EventBus {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun publish(event: Event,
-                         eventScope: EventScope) {
+    override fun publish(
+            event: Event,
+            eventScope: EventScope) {
+        checkClosed()
         logger.debug {
             "Publishing Event with key '${event.key}' and scope '$eventScope'."
         }
-        val failedSubscriptions = mutableListOf<Pair<Subscription, Exception>>()
-        subscriptions[SubscriberKey(eventScope, event.key)]?.let { subscribers ->
+        val subKey = SubscriberKey(eventScope, event.key)
+        subsRef.get()[subKey]?.let { subscribers ->
             subscribers.forEach { subscription ->
                 try {
                     logger.debug {
@@ -51,56 +68,23 @@ class DefaultEventBus : EventBus {
                     }
                     (subscription.callback as (Event) -> Unit).invoke(event)
                 } catch (e: Exception) {
-                    failedSubscriptions.add(subscription to e)
+                    logger.warn("Cancelling failed subscription '$subscription'.", e)
+                    try {
+                        subscription.cancel(CancelledByException(e))
+                    } catch (e: Exception) {
+                        logger.warn("Failed to auto-cancel subscription.", e)
+                    }
                 }
             }
-        }
-        failedSubscriptions.forEach { (subscription, e) ->
-            logger.warn("Cancelling failed subscription.", e)
-            try {
-                subscription.cancel(CancelledByException(e))
-            } catch (e: Exception) {
-                logger.warn("Failed to auto-cancel subscription.", e)
-            }
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Event, U : Any> send(event: T, eventScope: EventScope, callback: (SubmitResult<U>) -> Unit) {
-        processors[ProcessorKey(eventScope, event.key)]?.let { processor ->
-            val processorCallback: (T) -> U = processor.callback as (T) -> U
-            try {
-                callback(SubmitResultValue(processorCallback(event)))
-            } catch (e: Exception) {
-                callback(SubmitResultError(e))
-            }
-        } ?: callback(NoProcessorSubmitResult)
-    }
-
-    override fun <T : Event, U : Any> process(eventScope: EventScope, key: String, processorFn: (T) -> U): Subscription {
-        return try {
-            logger.debug {
-                "Subscribing to '$key' with scope '$eventScope'."
-            }
-            val subscription = EventBusSubscription(
-                    eventScope = eventScope,
-                    key = key,
-                    callback = processorFn)
-
-            processors.put(ProcessorKey(eventScope, key), subscription)?.cancel(CancelledByException(
-                    exception = IllegalStateException("Processor got overwritten with a new one for the same type.")))
-            subscription
-        } catch (e: Exception) {
-            logger.warn("Failed to add new subscription to subscriptions", e)
-            throw e
         }
     }
 
     override fun cancelScope(scope: EventScope) {
+        checkClosed()
         logger.debug {
             "Cancelling scope '$scope'."
         }
-        subscriptions.filterKeys { it.scope == scope }
+        subsRef.get().filter { it.key.scope == scope }
                 .flatMap { it.value }
                 .forEach {
                     try {
@@ -111,10 +95,23 @@ class DefaultEventBus : EventBus {
                 }
     }
 
-    private data class SubscriberKey(val scope: EventScope, val key: String)
-    // TODO: add type later
-    private data class ProcessorKey(val scope: EventScope, val key: String)
+    override fun close() {
+        closed = true
+        return subsRef.transform { subscriptions ->
+            subscriptions.forEach { (_, subs) ->
+                subs.forEach { it.cancel() }
+            }
+            persistentMapOf()
+        }
+    }
 
+    private fun checkClosed() {
+        if (closed) {
+            throw IllegalStateException("This EventBus is already closed.")
+        }
+    }
+
+    private data class SubscriberKey(val scope: EventScope, val key: String)
 
     private inner class EventBusSubscription<in T : Event, out U : Any>(
             val eventScope: EventScope,
@@ -127,15 +124,28 @@ class DefaultEventBus : EventBus {
 
         @Suppress("UNCHECKED_CAST")
         override fun cancel(cancelState: CancelState) {
-            try {
+            return try {
                 logger.debug {
                     "Cancelling event bus subscription with scope '$eventScope' and key '$key'."
                 }
-                subscriptions.getOrDefault(SubscriberKey(eventScope, key), ThreadSafeQueueFactory.create())
-                        .remove(this as EventBusSubscription<*, Unit>)
+                val key = SubscriberKey(eventScope, key)
                 this.cancelState = cancelState
+                subsRef.transform { subscriptions ->
+                    var newSubscriptions = subscriptions
+
+                    subscriptions[key]?.let { subs ->
+                        val newSubs = subs.remove(this as EventBusSubscription<*, Unit>)
+                        newSubscriptions = if (newSubs.isEmpty()) {
+                            newSubscriptions.remove(key)
+                        } else {
+                            newSubscriptions.put(key, newSubs)
+                        }
+                        newSubscriptions
+                    } ?: newSubscriptions
+                }
             } catch (e: Exception) {
                 logger.warn("Cancelling event bus subscription failed.", e)
+                throw e
             }
         }
     }

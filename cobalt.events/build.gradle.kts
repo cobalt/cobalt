@@ -16,6 +16,10 @@ kotlin {
 
     dependencies {
 
+        with(Libs) {
+            commonMainApi(kotlinxCollectionsImmutable)
+        }
+
         with(Projects) {
             commonMainApi(cobaltDatatypes)
             commonMainApi(cobaltLogging)
@@ -24,7 +28,9 @@ kotlin {
         with(TestLibs) {
             commonTestImplementation(kotlinTestCommon)
             commonTestImplementation(kotlinTestAnnotationsCommon)
+
             jvmTestImplementation(kotlinTestJunit)
+
             jsTestImplementation(kotlinTestJs)
         }
     }

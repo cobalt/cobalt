@@ -5,12 +5,12 @@ import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.data.DisposeState
 import org.hexworks.cobalt.databinding.api.data.DisposedByException
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
-import org.hexworks.cobalt.databinding.api.event.ChangeEvent
+import org.hexworks.cobalt.databinding.api.event.ObservableValueChanged
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.events.api.Subscription
-import org.hexworks.cobalt.events.api.subscribe
+import org.hexworks.cobalt.events.api.subscribeTo
 
 /**
  * A [ComputedDualBinding] creates a [Binding] using **two** [ObservableValue]s which will get
@@ -50,8 +50,8 @@ class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0:
         listeners.clearSubscriptions()
     }
 
-    override fun onChange(fn: (ChangeEvent<V>) -> Unit): Subscription {
-        return Cobalt.eventbus.subscribe<ChangeEvent<V>>(scope) {
+    override fun onChange(fn: (ObservableValueChanged<V>) -> Unit): Subscription {
+        return Cobalt.eventbus.subscribeTo<ObservableValueChanged<V>>(scope) {
             fn(it)
         }
     }
@@ -64,7 +64,7 @@ class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0:
                 oldValue
             } else {
                 this.currentValue = newValue
-                val event = ChangeEvent(
+                val event = ObservableValueChanged(
                         observableValue = this,
                         oldValue = oldValue,
                         newValue = newValue)

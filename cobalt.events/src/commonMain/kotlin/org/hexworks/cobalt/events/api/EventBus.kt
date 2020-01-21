@@ -1,55 +1,50 @@
 package org.hexworks.cobalt.events.api
 
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import org.hexworks.cobalt.events.internal.ApplicationScope
 import org.hexworks.cobalt.events.internal.DefaultEventBus
 
 /**
- * An [EventBus] can be used to `broadcast` [Event]s to subscribers of that
- * [Event].
+ * An [EventBus] can be used to broadcast [Event]s to subscribers of that [Event].
  */
 interface EventBus {
 
-    fun subscribersFor(eventScope: EventScope, key: String): Collection<Subscription>
+    /**
+     * Returns all subscribers of the event with the given [key] and [eventScope].
+     */
+    fun fetchSubscribersOf(
+            eventScope: EventScope = ApplicationScope,
+            key: String
+    ): Iterable<Subscription>
 
     /**
-     * Subscribes the callee to [Event]s which have the same [Event.key]
-     * as `key`.
+     * Subscribes the callee to [Event]s which have [eventScope] and [key].
      */
-    fun <T : Event> subscribe(eventScope: EventScope = ApplicationScope,
-                              key: String,
-                              callback: (T) -> Unit): Subscription
+    fun <T : Event> subscribeTo(
+            eventScope: EventScope = ApplicationScope,
+            key: String,
+            fn: (T) -> Unit
+    ): Subscription
 
     /**
      * Publishes the given [Event] to all listeners who have the same
-     * [EventScope] and [Event.key].
+     * [eventScope] and [Event.key].
      */
-    fun publish(event: Event,
-                eventScope: EventScope = ApplicationScope)
+    fun publish(
+            event: Event,
+            eventScope: EventScope = ApplicationScope)
+
 
     /**
-     * Sends the given [Event] to a listener which has the same
-     * [EventScope] and [Event.key] and consumes the result
-     * using the given `callback`.
-     * @see SubmitResult
-     */
-    fun <T : Event, U : Any> send(event: T,
-                                  eventScope: EventScope = ApplicationScope,
-                                  callback: (SubmitResult<U>) -> Unit)
-
-    /**
-     * Subscribes the callee to [Event]s which have the same [EventScope] and [Event.key]
-     * with the given `processorFn`. When an event of type [T] arrives to this
-     * [EventBus] `processorFn` will be called and its result will be routed to the
-     * sender of the event.
-     */
-    fun <T : Event, U : Any> process(eventScope: EventScope = ApplicationScope,
-                                     key: String,
-                                     processorFn: (T) -> U): Subscription
-
-    /**
-     * Cancels all [Subscription]s for a given [EventScope].
+     * Cancels all [Subscription]s for the given [scope].
      */
     fun cancelScope(scope: EventScope)
+
+    /**
+     * Cancels all subscriptions and closes this [EventBus].
+     */
+    fun close()
 
     companion object {
 

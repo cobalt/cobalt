@@ -5,18 +5,18 @@ import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.converter.IsomorphicConverter
 import org.hexworks.cobalt.databinding.api.data.DisposeState
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
-import org.hexworks.cobalt.databinding.api.event.ChangeEvent
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
+import org.hexworks.cobalt.databinding.api.event.ObservableValueChanged
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
 import org.hexworks.cobalt.databinding.api.property.Property
 import org.hexworks.cobalt.databinding.internal.extensions.runWithDisposeOnFailure
 import org.hexworks.cobalt.events.api.Subscription
-import org.hexworks.cobalt.events.api.subscribe
+import org.hexworks.cobalt.events.api.subscribeTo
 
 /**
  * Creates a **bidirectional** [Binding] between [source] and [target] which means that
  * whenever [source] gets updated [target] will be updated as well with the new value
- * and vica versa.
+ * and vice versa.
  * [converter] will be used to convert the values between [source] and [target].
  */
 class BidirectionalBinding<out S : Any, out T : Any>(
@@ -30,34 +30,40 @@ class BidirectionalBinding<out S : Any, out T : Any>(
     override var disposeState: DisposeState = NotDisposed
         private set
 
-    private val scope = ChangeEventScope()
+    private val selfScope = ChangeEventScope()
 
     private val listeners: MutableList<Subscription> = mutableListOf(
             source.onChange { changeEvent ->
                 runWithDisposeOnFailure {
-                    target.value = converter.convert(source.value)
-                    Cobalt.eventbus.publish(
-                            event = changeEvent,
-                            eventScope = scope)
+                    val newValue = converter.convert(changeEvent.newValue)
+                    if (target.value != newValue) {
+                        target.value = newValue
+                        Cobalt.eventbus.publish(
+                                event = changeEvent,
+                                eventScope = selfScope)
+                    }
                 }
             },
             target.onChange { changeEvent ->
                 runWithDisposeOnFailure {
-                    source.value = converter.convertBack(target.value)
-                    Cobalt.eventbus.publish(
-                            event = changeEvent,
-                            eventScope = scope)
+                    val newValue = converter.convertBack(changeEvent.newValue)
+                    if (source.value != newValue) {
+                        source.value = newValue
+                        Cobalt.eventbus.publish(
+                                event = changeEvent,
+                                eventScope = selfScope)
+                    }
                 }
             })
 
     override fun dispose(disposeState: DisposeState) {
-        Cobalt.eventbus.cancelScope(scope)
+        Cobalt.eventbus.cancelScope(selfScope)
         this.disposeState = disposeState
         listeners.clearSubscriptions()
     }
 
-    override fun onChange(fn: (ChangeEvent<S>) -> Unit): Subscription {
-        return Cobalt.eventbus.subscribe<ChangeEvent<S>>(scope) {
+    override fun onChange(fn: (ObservableValueChanged<S>) -> Unit): Subscription {
+        return Cobalt.eventbus.subscribeTo<ObservableValueChanged<S>>(selfScope) {
             fn(it)
         }
     }

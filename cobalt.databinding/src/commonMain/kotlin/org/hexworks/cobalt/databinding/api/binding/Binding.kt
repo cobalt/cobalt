@@ -15,7 +15,7 @@ interface Binding<out T : Any> : ObservableValue<T> {
      * Tells whether this [Binding] is disposed or not.
      */
     val disposed: Boolean
-        get() = disposeState.disposed
+        get() = disposeState.isDisposed
 
     /**
      * Contains detailed information about the dispose state

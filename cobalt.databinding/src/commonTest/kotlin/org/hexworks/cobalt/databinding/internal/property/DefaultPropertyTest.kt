@@ -1,8 +1,7 @@
 package org.hexworks.cobalt.databinding.internal.property
 
-import org.hexworks.cobalt.databinding.api.event.ChangeEvent
+import org.hexworks.cobalt.databinding.api.event.ObservableValueChanged
 import org.hexworks.cobalt.datatypes.Maybe
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -10,17 +9,12 @@ import kotlin.test.assertTrue
 @Suppress("FunctionName", "TestFunctionName")
 class DefaultPropertyTest {
 
-    lateinit var target: DefaultProperty<String>
-
-    @BeforeTest
-    fun Set_up() {
-        target = DefaultProperty(XUL)
-    }
+    private val target = DefaultProperty(XUL)
 
     @Test
     fun When_target_property_value_changes_the_change_listener_should_be_notified_with_the_proper_event() {
-        var change = Maybe.empty<ChangeEvent<String>>()
-        val expectedChange = ChangeEvent(
+        var change = Maybe.empty<ObservableValueChanged<String>>()
+        val expectedChange = ObservableValueChanged(
                 observableValue = target,
                 oldValue = XUL,
                 newValue = QUX)
@@ -66,7 +60,7 @@ class DefaultPropertyTest {
         otherProperty.value = BAZ
 
         assertEquals(expected = BAZ, actual = target.value, message = "Property value was not set to other value.")
-        assertEquals(expected = BAZ, actual = boundProperty.value, message = "Property value was not set to other value.")
+        assertEquals(expected = BAZ, actual = boundProperty.value, message = "Bound property value was not set to other value.")
 
     }
 
@@ -86,9 +80,9 @@ class DefaultPropertyTest {
 
     @Test
     fun When_binding_bidirectionally_to_another_property_target_value_should_be_updated() {
-        val otherProperty0 = DefaultProperty(QUX)
+        val other = DefaultProperty(QUX)
 
-        target.bind(otherProperty0)
+        target.bind(other)
 
         assertEquals(expected = QUX, actual = target.value)
 
@@ -167,7 +161,7 @@ class DefaultPropertyTest {
         val otherProperty = DefaultProperty(1)
 
         target.updateFrom(otherProperty) {
-            otherProperty.value.toString()
+            it.toString()
         }
 
         otherProperty.value = 2

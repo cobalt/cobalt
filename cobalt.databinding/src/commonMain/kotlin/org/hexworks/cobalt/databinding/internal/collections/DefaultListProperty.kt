@@ -9,21 +9,21 @@ import org.hexworks.cobalt.databinding.api.collections.ObservableList
 import org.hexworks.cobalt.databinding.api.converter.IsomorphicConverter
 import org.hexworks.cobalt.databinding.api.data.DisposeState
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
-import org.hexworks.cobalt.databinding.api.event.ChangeEvent
+import org.hexworks.cobalt.databinding.api.event.ObservableValueChanged
 import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
 import org.hexworks.cobalt.databinding.internal.extensions.runWithDisposeOnFailure
 import org.hexworks.cobalt.databinding.internal.property.IdentityConverter
 import org.hexworks.cobalt.events.api.Subscription
-import org.hexworks.cobalt.events.api.subscribe
+import org.hexworks.cobalt.events.api.subscribeTo
 
 @Suppress("UNCHECKED_CAST")
 class DefaultListProperty<T : Any>(
         private val backingList: MutableList<T>)
     : ListProperty<T>, MutableList<T> by backingList {
 
-    override fun onChange(fn: (ChangeEvent<List<T>>) -> Unit): Subscription {
-        return Cobalt.eventbus.subscribe<ChangeEvent<ListProperty<T>>>(scope) {
+    override fun onChange(fn: (ObservableValueChanged<List<T>>) -> Unit): Subscription {
+        return Cobalt.eventbus.subscribeTo<ObservableValueChanged<ListProperty<T>>>(scope) {
             fn(it)
         }
     }
@@ -156,8 +156,8 @@ class DefaultListProperty<T : Any>(
             bindings.remove(this)
         }
 
-        override fun onChange(fn: (ChangeEvent<ListProperty<S>>) -> Unit): Subscription {
-            return Cobalt.eventbus.subscribe<ChangeEvent<ListProperty<S>>>(scope) {
+        override fun onChange(fn: (ObservableValueChanged<ListProperty<S>>) -> Unit): Subscription {
+            return Cobalt.eventbus.subscribeTo<ObservableValueChanged<ListProperty<S>>>(scope) {
                 fn(it)
             }
         }

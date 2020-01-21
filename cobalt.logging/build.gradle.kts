@@ -21,6 +21,7 @@ kotlin {
         }
 
         with(Libs) {
+            commonMainApi(kotlinxCollectionsImmutable)
             commonMainImplementation(slf4jApi)
         }
 
