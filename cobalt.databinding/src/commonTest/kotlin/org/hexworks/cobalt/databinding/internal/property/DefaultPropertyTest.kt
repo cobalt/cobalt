@@ -79,6 +79,21 @@ class DefaultPropertyTest {
     }
 
     @Test
+    fun When_setting_a_value_in_a_circular_binding_it_should_not_lead_to_a_deadlock() {
+        val otherProperty0 = DefaultProperty(QUX)
+        val otherProperty1 = DefaultProperty(BAZ)
+
+        target.bind(otherProperty0)
+        otherProperty0.bind(otherProperty1)
+        otherProperty1.bind(target)
+        target.value = XUL
+
+        assertEquals(expected = XUL, actual = target.value)
+        assertEquals(expected = XUL, actual = otherProperty0.value)
+        assertEquals(expected = XUL, actual = otherProperty1.value)
+    }
+
+    @Test
     fun When_binding_bidirectionally_to_another_property_target_value_should_be_updated() {
         val other = DefaultProperty(QUX)
 

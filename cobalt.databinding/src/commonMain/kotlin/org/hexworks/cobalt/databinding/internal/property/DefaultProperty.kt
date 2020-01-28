@@ -37,7 +37,7 @@ class DefaultProperty<T : Any>(
     override fun toString() = "Property(id=${id.toString().substring(0, 4)}, value=$value)"
 
     override fun updateValue(newValue: T): ValueValidationResult {
-        println("Trying to update value $value to new value $newValue.")
+        logger.debug("Trying to update value $value to new value $newValue.")
         return try {
             updateCurrentValue(newValue)
             ValueValidationSuccessful
@@ -47,7 +47,7 @@ class DefaultProperty<T : Any>(
     }
 
     override fun onChange(fn: (ObservableValueChanged<T>) -> Unit): Subscription {
-        println("Subscribing to changes to property: $this.")
+        logger.debug("Subscribing to changes to property: $this.")
         return Cobalt.eventbus.subscribeTo<ObservableValueChanged<T>>(selfScope) {
             fn(it)
         }
@@ -62,7 +62,7 @@ class DefaultProperty<T : Any>(
     override fun <U : Any> bind(other: Property<U>,
                                 updateWhenBound: Boolean,
                                 converter: IsomorphicConverter<T, U>): Binding<T> {
-        println("Binding property $this to other property $other.")
+        logger.debug("Binding property $this to other property $other.")
         checkSelfBinding(other)
         updateCurrentValue(converter.convertBack(other.value))
         return BidirectionalBinding(this, other, converter)
@@ -76,7 +76,7 @@ class DefaultProperty<T : Any>(
             observable: ObservableValue<U>,
             updateWhenBound: Boolean,
             converter: (U) -> T): Binding<T> {
-        println("Starting to update property $this from $observable.")
+        logger.debug("Starting to update property $this from $observable.")
         checkSelfBinding(observable)
         updateCurrentValue(converter(observable.value))
         return UnidirectionalBinding(observable, this, converter)
@@ -88,9 +88,11 @@ class DefaultProperty<T : Any>(
         }
     }
 
+    // This won't lead to a deadlock in case we try to set the value twice in case of a
+    // circular dependency, because we already have the monitor.
     @Synchronized
     private fun updateCurrentValue(value: T) {
-        println("Updating current value of property $this to $value.")
+        logger.debug("Updating current value of property $this to $value.")
         var oldValue = atom.get()
         atom.transform { currValue ->
             oldValue = currValue
@@ -101,13 +103,12 @@ class DefaultProperty<T : Any>(
         }
         // this trick enables the whole system not to crash if there is a circular dependency
         if (oldValue != value) {
-            val event = ObservableValueChanged(
-                    observableValue = this,
-                    oldValue = oldValue,
-                    newValue = value)
-            println("Old value $oldValue of $this differs from new value $value, firing change event.")
+            logger.debug("Old value $oldValue of $this differs from new value $value, firing change event.")
             Cobalt.eventbus.publish(
-                    event = event,
+                    event = ObservableValueChanged(
+                            observableValue = this,
+                            oldValue = oldValue,
+                            newValue = value),
                     eventScope = selfScope)
         }
     }

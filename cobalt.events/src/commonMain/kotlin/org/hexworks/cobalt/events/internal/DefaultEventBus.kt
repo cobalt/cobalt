@@ -10,43 +10,42 @@ import org.hexworks.cobalt.core.internal.toAtom
 import org.hexworks.cobalt.events.api.*
 import org.hexworks.cobalt.logging.api.LoggerFactory
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.Volatile
 
 class DefaultEventBus(
         override val coroutineContext: CoroutineContext = Dispatchers.Default + SupervisorJob())
     : EventBus, CoroutineScope {
 
+    @Volatile
     private var closed = false
+    @Volatile
+    private var subsAtom = persistentMapOf<SubscriberKey, PersistentList<EventBusSubscription<*, Unit>>>().toAtom()
     private val logger = LoggerFactory.getLogger(this::class)
-    private var subsRef = persistentMapOf<SubscriberKey, PersistentList<EventBusSubscription<*, Unit>>>().toAtom()
 
     override fun fetchSubscribersOf(eventScope: EventScope, key: String): Iterable<Subscription> {
-        checkClosed()
-        return subsRef.get().getOrElse(SubscriberKey(eventScope, key)) { listOf() }
+        return subsAtom.get().getOrElse(SubscriberKey(eventScope, key)) { listOf() }
     }
 
     override fun <T : Event> subscribeTo(
             eventScope: EventScope,
             key: String,
             fn: (T) -> Unit
-    ): Subscription {
-        checkClosed()
-        return try {
-            logger.debug {
-                "Subscribing to '$key' with scope '$eventScope'."
-            }
+    ): Subscription = whenNotClosed {
+        try {
+            logger.debug("Subscribing to $key with scope $eventScope.")
             val subscription = EventBusSubscription(
                     eventScope = eventScope,
                     key = key,
                     callback = fn)
             val subKey = SubscriberKey(eventScope, key)
-            subsRef.transform { subscriptions ->
+            subsAtom.transform { subscriptions ->
                 subscriptions.put(subKey, subscriptions
                         .getOrElse(subKey) { persistentListOf() }
                         .add(subscription))
             }
             subscription
         } catch (e: Exception) {
-            logger.warn("Failed to add new subscription to subscriptions", e)
+            logger.warn("Failed to subscribe to event key $key with scope $eventScope", e)
             throw e
         }
     }
@@ -54,50 +53,42 @@ class DefaultEventBus(
     @Suppress("UNCHECKED_CAST")
     override fun publish(
             event: Event,
-            eventScope: EventScope) {
-        checkClosed()
+            eventScope: EventScope): Unit = whenNotClosed {
         logger.debug {
-            "Publishing Event with key '${event.key}' and scope '$eventScope'."
+            "Publishing event with key ${event.key} and scope $eventScope."
         }
-        val subKey = SubscriberKey(eventScope, event.key)
-        subsRef.get()[subKey]?.let { subscribers ->
+        subsAtom.get()[SubscriberKey(eventScope, event.key)]?.let { subscribers ->
             subscribers.forEach { subscription ->
                 try {
-                    logger.debug {
-                        "Trying to invoke callback for event."
-                    }
                     (subscription.callback as (Event) -> Unit).invoke(event)
                 } catch (e: Exception) {
-                    logger.warn("Cancelling failed subscription '$subscription'.", e)
+                    logger.warn("Cancelling failed subscription $subscription.", e)
                     try {
                         subscription.cancel(CancelledByException(e))
                     } catch (e: Exception) {
-                        logger.warn("Failed to auto-cancel subscription.", e)
+                        logger.warn("Failed to auto-cancel subscription $subscription.", e)
                     }
                 }
             }
         }
     }
 
-    override fun cancelScope(scope: EventScope) {
-        checkClosed()
-        logger.debug {
-            "Cancelling scope '$scope'."
-        }
-        subsRef.get().filter { it.key.scope == scope }
+    override fun cancelScope(scope: EventScope): Unit = whenNotClosed {
+        logger.debug("Cancelling scope $scope.")
+        subsAtom.get().filter { it.key.scope == scope }
                 .flatMap { it.value }
                 .forEach {
                     try {
                         it.cancel()
                     } catch (e: Exception) {
-                        logger.warn("Cancelling subscription failed: ${e.message} while cancelling scope.")
+                        logger.warn("Cancelling subscription failed while cancelling scope. Reason: ${e.message}")
                     }
                 }
     }
 
     override fun close() {
         closed = true
-        return subsRef.transform { subscriptions ->
+        return subsAtom.transform { subscriptions ->
             subscriptions.forEach { (_, subs) ->
                 subs.forEach { it.cancel() }
             }
@@ -105,10 +96,8 @@ class DefaultEventBus(
         }
     }
 
-    private fun checkClosed() {
-        if (closed) {
-            throw IllegalStateException("This EventBus is already closed.")
-        }
+    private fun <T> whenNotClosed(fn: () -> T): T {
+        return if (closed) error("This Event Bus is already closed.") else fn()
     }
 
     private data class SubscriberKey(val scope: EventScope, val key: String)
@@ -130,7 +119,7 @@ class DefaultEventBus(
                 }
                 val key = SubscriberKey(eventScope, key)
                 this.cancelState = cancelState
-                subsRef.transform { subscriptions ->
+                subsAtom.transform { subscriptions ->
                     var newSubscriptions = subscriptions
 
                     subscriptions[key]?.let { subs ->
