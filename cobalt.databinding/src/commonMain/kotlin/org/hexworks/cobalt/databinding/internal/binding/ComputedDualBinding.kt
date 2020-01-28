@@ -1,13 +1,14 @@
 package org.hexworks.cobalt.databinding.internal.binding
 
+import org.hexworks.cobalt.core.api.Identifier
 import org.hexworks.cobalt.databinding.api.Cobalt
 import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.data.DisposeState
-import org.hexworks.cobalt.databinding.api.data.DisposedByException
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
 import org.hexworks.cobalt.databinding.api.event.ObservableValueChanged
-import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
+import org.hexworks.cobalt.databinding.internal.event.PropertyScope
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
+import org.hexworks.cobalt.databinding.api.extensions.toInternalProperty
 import org.hexworks.cobalt.databinding.api.value.ObservableValue
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribeTo
@@ -17,63 +18,71 @@ import org.hexworks.cobalt.events.api.subscribeTo
  * updated whenever any of those values get updated using [computerFn] to compute the new value
  * of this [Binding].
  */
-class ComputedDualBinding<out T : Any, out U : Any, V : Any>(private val value0: ObservableValue<T>,
-                                                             private val value1: ObservableValue<U>,
-                                                             private val computerFn: (T, U) -> V) : Binding<V> {
+class ComputedDualBinding<out S0 : Any, out S1 : Any, T : Any>(
+        private val source0: ObservableValue<S0>,
+        private val source1: ObservableValue<S1>,
+        private val computerFn: (S0, S1) -> T
+) : Binding<T> {
 
-    private val scope = ChangeEventScope()
+    private val target = computerFn(source0.value, source1.value).toInternalProperty()
 
-    override val value: V
+    override val value: T
         get() {
             require(disposed.not()) {
                 "Can't calculate the value of a Binding which is disposed."
             }
-            return currentValue
+            return target.value
         }
 
-    private var currentValue: V = try {
-        computerFn(value0.value, value1.value)
-    } catch (e: Exception) {
-        throw IllegalArgumentException("Can't calculate initial value for binding", e)
-    }
-
     override var disposeState: DisposeState = NotDisposed
-        private set
+        internal set
 
-    private val listeners: MutableList<Subscription> = mutableListOf(
-            value0.onChange { doCalculate() },
-            value1.onChange { doCalculate() })
+    private val id = Identifier.randomIdentifier()
+    private val propertyScope = PropertyScope(id)
+    private val subscriptions = mutableListOf<Subscription>()
+
+    init {
+        subscriptions.add(source0.onChange { event ->
+            val oldValue = computerFn(event.oldValue, source1.value)
+            val newValue = computerFn(event.newValue, source1.value)
+            if (oldValue != newValue) {
+                target.value = newValue
+                Cobalt.eventbus.publish(
+                        event = ObservableValueChanged(
+                                oldValue = oldValue,
+                                newValue = newValue,
+                                observableValue = this,
+                                emitter = this,
+                                trace = listOf(event) + event.trace),
+                        eventScope = propertyScope)
+            }
+        })
+        subscriptions.add(source1.onChange { event ->
+            val oldValue = computerFn(source0.value, event.oldValue)
+            val newValue = computerFn(source0.value, event.newValue)
+            if (oldValue != newValue) {
+                target.value = newValue
+                Cobalt.eventbus.publish(
+                        event = ObservableValueChanged(
+                                oldValue = oldValue,
+                                newValue = newValue,
+                                observableValue = this,
+                                emitter = this,
+                                trace = listOf(event) + event.trace),
+                        eventScope = propertyScope)
+            }
+        })
+    }
 
     override fun dispose(disposeState: DisposeState) {
         this.disposeState = disposeState
-        Cobalt.eventbus.cancelScope(scope)
-        listeners.clearSubscriptions()
+        Cobalt.eventbus.cancelScope(propertyScope)
+        subscriptions.clearSubscriptions()
     }
 
-    override fun onChange(fn: (ObservableValueChanged<V>) -> Unit): Subscription {
-        return Cobalt.eventbus.subscribeTo<ObservableValueChanged<V>>(scope) {
+    override fun onChange(fn: (ObservableValueChanged<T>) -> Unit): Subscription {
+        return Cobalt.eventbus.subscribeTo<ObservableValueChanged<T>>(propertyScope) {
             fn(it)
-        }
-    }
-
-    private fun doCalculate(): V {
-        return try {
-            val oldValue = currentValue
-            val newValue = computerFn(value0.value, value1.value)
-            if (oldValue == newValue) {
-                oldValue
-            } else {
-                this.currentValue = newValue
-                val event = ObservableValueChanged(
-                        observableValue = this,
-                        oldValue = oldValue,
-                        newValue = newValue)
-                Cobalt.eventbus.publish(event, scope)
-                newValue
-            }
-        } catch (e: Exception) {
-            dispose(DisposedByException(e))
-            currentValue
         }
     }
 }

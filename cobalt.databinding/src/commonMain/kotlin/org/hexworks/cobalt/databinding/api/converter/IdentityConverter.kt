@@ -1,8 +1,8 @@
 package org.hexworks.cobalt.databinding.api.converter
 
-/**
- * [Converter] which returns the same object when [Converter.convert] is called.
- */
-class IdentityConverter<T: Any> : Converter<T, T> {
+class IdentityConverter<T : Any> : IsomorphicConverter<T, T> {
+
     override fun convert(source: T) = source
+
+    override fun convertBack(target: T) = target
 }

@@ -17,7 +17,8 @@ class DefaultPropertyTest {
         val expectedChange = ObservableValueChanged(
                 observableValue = target,
                 oldValue = XUL,
-                newValue = QUX)
+                newValue = QUX,
+                emitter = target)
 
         target.onChange {
             change = Maybe.of(it)

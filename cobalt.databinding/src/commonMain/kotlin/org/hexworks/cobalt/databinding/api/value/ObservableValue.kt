@@ -15,4 +15,5 @@ interface ObservableValue<out T : Any> : Value<T> {
      */
     fun onChange(fn: (ObservableValueChanged<T>) -> Unit): Subscription
 
+    companion object
 }

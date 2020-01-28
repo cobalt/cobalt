@@ -40,7 +40,7 @@ class EventBusTest {
         }
 
         subscription0.cancel()
-        target.publish(TestEvent)
+        target.publish(TestEvent(this))
 
         assertFalse(sub0Notified)
         assertTrue(sub1Notified)
@@ -56,7 +56,7 @@ class EventBusTest {
             notified = true
         }
 
-        target.publish(TestEvent)
+        target.publish(TestEvent(this))
 
         assertEquals(true, notified, "Subscriber was not notified.")
     }
@@ -69,7 +69,7 @@ class EventBusTest {
             notified = true
         }
 
-        target.publish(TestEvent, TestScope)
+        target.publish(TestEvent(this), TestScope)
 
         assertEquals(true, notified, "Subscriber was not notified.")
     }
@@ -82,7 +82,7 @@ class EventBusTest {
             notified = true
         }
 
-        target.publish(TestEvent, TestScope)
+        target.publish(TestEvent(this), TestScope)
 
         assertEquals(false, notified, "Subscriber should not have been notified.")
     }
@@ -96,7 +96,7 @@ class EventBusTest {
             notified = true
         }
 
-        target.publish(TestEvent)
+        target.publish(TestEvent(this))
 
         assertEquals(true, notified, "Subscriber was not notified.")
     }
@@ -114,7 +114,7 @@ class EventBusTest {
             notifications += 1
         }
 
-        target.publish(TestEvent)
+        target.publish(TestEvent(this))
 
         assertEquals(listOf(0, 1), notifications, "All subscribers should have been notified.")
     }
@@ -130,7 +130,7 @@ class EventBusTest {
             notifications.add(ApplicationScope)
         }
 
-        target.publish(TestEvent, TestScope)
+        target.publish(TestEvent(this), TestScope)
 
         assertEquals(mutableListOf<EventScope>(TestScope), notifications, "Only the subscriber with TestScope should have been notified.")
     }
@@ -154,13 +154,21 @@ class EventBusTest {
             throw exception
         }
 
-        target.publish(TestEvent)
+        target.publish(TestEvent(this))
 
         assertEquals(expected = expectedState, actual = subscription.cancelState,
                 message = "Subscriber should have been cancelled with exception")
     }
 
-    object TestEvent : Event
+    data class TestEvent(
+            override val emitter: Any,
+            override val trace: Iterable<Event> = listOf()
+    ) : Event {
+
+        companion object {
+            val key = TestEvent::class.simpleName!!
+        }
+    }
 
     object TestScope : EventScope
 }

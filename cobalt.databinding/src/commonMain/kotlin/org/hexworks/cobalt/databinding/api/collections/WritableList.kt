@@ -22,4 +22,6 @@ interface WritableList<T : Any> : Value<List<T>>, MutableList<T> {
      * @return a [Binding] which can be disposed to stop the updates
      */
     fun <U : Any> updateFrom(observable: ObservableList<U>, converter: (U) -> T): Binding<ObservableList<T>>
+
+    companion object
 }

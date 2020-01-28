@@ -30,13 +30,14 @@ interface Property<T : Any> : WritableValue<T>, ObservableValue<T> {
      * [WritableValue] will be updated when the binding takes place.
      * Otherwise it will only get updated when [other] is updated.
      */
-    fun <U : Any> bind(other: Property<U>,
+    fun <S : Any> bind(other: Property<S>,
                        updateWhenBound: Boolean = true,
-                       converter: IsomorphicConverter<T, U>): Binding<T>
+                       converter: IsomorphicConverter<S, T>): Binding<T>
 
     /**
      * Creates a [PropertyDelegate] for this [Property].
      */
     fun asDelegate(): PropertyDelegate<T> = DefaultPropertyDelegate(this)
 
+    companion object
 }

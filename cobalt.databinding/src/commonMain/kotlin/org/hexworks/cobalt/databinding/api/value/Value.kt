@@ -6,4 +6,6 @@ package org.hexworks.cobalt.databinding.api.value
 interface Value<out T: Any> {
 
     val value: T
+
+    companion object
 }

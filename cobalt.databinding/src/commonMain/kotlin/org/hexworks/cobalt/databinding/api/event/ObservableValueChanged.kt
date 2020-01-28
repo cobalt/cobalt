@@ -7,6 +7,12 @@ import org.hexworks.cobalt.events.api.Event
  * Fired when an [ObservableValue] **changes** its value.
  */
 data class ObservableValueChanged<out T : Any>(
-        val observableValue: ObservableValue<T>,
         val oldValue: T,
-        val newValue: T) : Event
+        val newValue: T,
+        val observableValue: ObservableValue<T>,
+        override val emitter: Any,
+        override val trace: Iterable<Event> = listOf()
+): Event {
+
+    companion object
+}

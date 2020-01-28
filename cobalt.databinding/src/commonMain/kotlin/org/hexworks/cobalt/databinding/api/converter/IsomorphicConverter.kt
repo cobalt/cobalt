@@ -10,4 +10,13 @@ interface IsomorphicConverter<S, T> : Converter<S, T> {
      * Converts `target` to an object of type [S].
      */
     fun convertBack(target: T): S
+
+    fun reverseConverter(): Converter<T, S> = object : Converter<T, S> {
+
+        override fun convert(source: T): S {
+            return convertBack(source)
+        }
+    }
+
+    companion object
 }

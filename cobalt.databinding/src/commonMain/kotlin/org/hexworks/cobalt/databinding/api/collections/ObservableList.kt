@@ -9,4 +9,7 @@ import org.hexworks.cobalt.databinding.api.value.ObservableValue
  * and [ObservableValueChanged.newValue] is considered a stable snapshot, eg:
  * it won't change if the underlying [List] changes *after* receiving the event.
  */
-interface ObservableList<T : Any> : List<T>, ObservableValue<List<T>>
+interface ObservableList<T : Any> : List<T>, ObservableValue<List<T>> {
+
+    companion object
+}

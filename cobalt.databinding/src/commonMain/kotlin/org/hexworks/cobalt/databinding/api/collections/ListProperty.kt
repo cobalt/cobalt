@@ -33,4 +33,6 @@ interface ListProperty<T : Any> : MutableList<T>, ObservableList<T>, WritableLis
      * Creates a [PropertyDelegate] for this [Property].
      */
     fun asDelegate(): ListPropertyDelegate<T> = DefaultListPropertyDelegate(this)
+
+    companion object
 }

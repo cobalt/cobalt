@@ -2,18 +2,19 @@
 
 package org.hexworks.cobalt.databinding.internal.collections
 
+import org.hexworks.cobalt.core.api.Identifier
 import org.hexworks.cobalt.databinding.api.Cobalt
 import org.hexworks.cobalt.databinding.api.binding.Binding
 import org.hexworks.cobalt.databinding.api.collections.ListProperty
 import org.hexworks.cobalt.databinding.api.collections.ObservableList
+import org.hexworks.cobalt.databinding.api.converter.IdentityConverter
 import org.hexworks.cobalt.databinding.api.converter.IsomorphicConverter
 import org.hexworks.cobalt.databinding.api.data.DisposeState
 import org.hexworks.cobalt.databinding.api.data.NotDisposed
 import org.hexworks.cobalt.databinding.api.event.ObservableValueChanged
-import org.hexworks.cobalt.databinding.api.event.ChangeEventScope
+import org.hexworks.cobalt.databinding.internal.event.PropertyScope
 import org.hexworks.cobalt.databinding.api.extensions.clearSubscriptions
 import org.hexworks.cobalt.databinding.internal.extensions.runWithDisposeOnFailure
-import org.hexworks.cobalt.databinding.internal.property.IdentityConverter
 import org.hexworks.cobalt.events.api.Subscription
 import org.hexworks.cobalt.events.api.subscribeTo
 
@@ -35,7 +36,8 @@ class DefaultListProperty<T : Any>(
                     "Can't set the value of a ListProperty directly. Try using clear + addAll")
         }
 
-    private val scope = ChangeEventScope()
+    private val id = Identifier.randomIdentifier()
+    private val scope = PropertyScope(id)
     private val listIdentityConverter = IdentityConverter<T>()
     private val bindings: MutableList<ListBinding<out Any, out Any>> = mutableListOf()
 
@@ -138,7 +140,8 @@ class DefaultListProperty<T : Any>(
         override var disposeState: DisposeState = NotDisposed
             private set
 
-        private val scope = ChangeEventScope()
+        private val id = Identifier.randomIdentifier()
+        private val scope = PropertyScope(id)
 
         private val listeners: MutableList<Subscription> = mutableListOf(
                 source.onChange { changeEvent ->
